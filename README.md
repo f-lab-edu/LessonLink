@@ -157,4 +157,3 @@ make build
 - [pytest](https://docs.pytest.org/)를 사용하여 테스트를 작성합니다.
   - `make test` 명령어를 사용하여 테스트를 실행할 수 있습니다.
 - `make help` 명령어로 실행가능한 명령어들을 확인할 수 있습니다.
-
