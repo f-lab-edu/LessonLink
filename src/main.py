@@ -37,6 +37,7 @@ import database
 
 app = FastAPI()
 
+
 @app.get("/")
 def root_handler(session: Session = Depends(database.get_db)):
     stmt = select(Students).where(Students.student_id == 'admin')
