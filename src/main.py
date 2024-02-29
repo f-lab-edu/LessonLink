@@ -1,6 +1,13 @@
 # from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from database_orm import Students
+
+import database
+
+
 
 # from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,5 +38,11 @@ from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/")
-def root_handler():
-    return {"message": "Hello World!"}
+def root_handler(session: Session = Depends(database.get_db)):
+    stmt = select(Students).where(Students.student_id == 'admin')
+    query_result = session.scalar(stmt)
+        
+    return query_result
+
+
+
