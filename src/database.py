@@ -1,22 +1,38 @@
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlmodel import SQLModel, pool
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from src import config
+# from sqlalchemy.ext.asyncio import create_async_engine
+# from sqlmodel import SQLModel, pool
 
-engine = create_async_engine(
-    url=config.db.url,
-    echo=config.db.echo,
-    connect_args={
-        "check_same_thread": False,
-    },
-    poolclass=pool.StaticPool,
-)
+# from src import config
 
-
-async def create_db_and_tables() -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+# engine = create_async_engine(
+#     url=config.db.url,
+#     echo=config.db.echo,
+#     connect_args={
+#         "check_same_thread": False,
+#     },
+#     poolclass=pool.StaticPool,
+# )
 
 
-async def close_db() -> None:
-    await engine.dispose()
+# async def create_db_and_tables() -> None:
+#     async with engine.begin() as conn:
+#         await conn.run_sync(SQLModel.metadata.create_all)
+
+
+# async def close_db() -> None:
+#     await engine.dispose()
+
+DATABASE_URL :str = "mysql+pymysql://root:admin@localhost:3306/lessonlink"
+
+
+engine = create_engine(DATABASE_URL, echo=True, future=True)
+SessionFactory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_database():
+    session = SessionFactory()
+    try:
+        yield session
+    finally:
+        session.close()
