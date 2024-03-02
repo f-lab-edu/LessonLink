@@ -11,7 +11,7 @@ app = FastAPI()
 
 @app.get("/")
 def root_handler():
-    return {"Hello":"World!"}
+    return {"Hello":"World!", "Server": "LessonLink"}
 
 @app.get("/students", status_code=200)
 def get_students_handler(session: Session = Depends(get_database)):
@@ -28,6 +28,10 @@ def get_students_by_id_handler(
     
     if not query_result:
         error_msg = f"Not found student infomation of id = {student_id}"
-        raise HTTPException(status_code=404, 
-                            detail=error_msg)
+
+        raise HTTPException(
+            status_code=404, 
+            detail=error_msg
+            )
+    
     return query_result
