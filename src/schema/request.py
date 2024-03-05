@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
 
-class StudentRequest(BaseModel):
+class CreateStudentRequest(BaseModel):
     student_id: str
     student_pw: str = None
     student_name: str = None
