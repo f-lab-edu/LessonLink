@@ -5,70 +5,56 @@ from sqlalchemy import delete, select, update
 from database.database import get_database
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest
+from database.database_repo import InstructorRepository
+from schema.response import InstructorSchema
 
 router = APIRouter(prefix="/instructors")
 
-@router.get("/", status_code=200)
-def get_instructor_handler(session: Session = Depends(get_database)):
-    return list(session.scalars(select(Instructors)))
+@router.get("/", status_code=200, tags=["Instructors"])
+def get_instructor_handler(repo: InstructorRepository = Depends()):
+    return repo.get_all_instructors()
 
-@router.get("/{instructor_id}", status_code=200)
+@router.get("/{instructor_id}", status_code=200, tags=["Instructors"])
 def get_instructor_by_id_handler(
     instructor_id: str,
-    session: Session = Depends(get_database)
+    repo: InstructorRepository = Depends()
 ):
-    query_result = session.scalar(select(Instructors).where(Instructors.instructor_id == instructor_id))
+    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
     
-    if query_result:
-        return query_result
+    if instructor_id:
+        return instructor
     raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {instructor_id}")
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, tags=["Instructors"])
 def post_create_instructor_handler(
     request: CreateInstructorRequest,
-    session: Session = Depends(get_database)
+    repo: InstructorRepository = Depends()
 ):
-    instructor = Instructors(
-        instructor_id=request.instructor_id,
-        instructor_pw=request.instructor_pw,
-        instructor_name=request.instructor_name,
-        instructor_contact=request.instructor_contact,
-        instructor_email=request.instructor_email,
-        subject=request.subject,
-    )
-
-    query_result = session.scalar(select(Instructors).where(Instructors.instructor_id == instructor.instructor_id))
+    instructor: Instructors = Instructors.create(request=request)
+    instructor: Instructors = repo.create_instructor(instructor=instructor)
+    return InstructorSchema.from_orm(instructor)
     
-    if not query_result:
-        session.add(instructor)
-        session.commit()
-    else:
-        raise HTTPException(status_code=409, detail="이미 존재하는 ID입니다.")
-    
-@router.patch("/{instructor_id}", status_code=200)
+@router.patch("/{instructor_id}", status_code=200, tags=["Instructors"])
 def patch_update_instructor_pw_by_id_handler(
     instructor_id: str,
     instructor_pw: str,
-    session: Session = Depends(get_database)
+    repo: InstructorRepository = Depends()
 ):
-    query_result = session.scalar(select(Instructors).where(Instructors.instructor_id == instructor_id))
+    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
 
-    if query_result:
-        instructor = session.execute(select(Instructors).filter_by(instructor_id=instructor_id)).scalar_one()
-        instructor.instructor_pw = instructor_pw
-        session.commit()
+    if instructor:
+        repo.update_instructor_pw_by_id(instructor_id=instructor_id, instructor_pw=instructor_pw)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")
     
-@router.delete("/{instructor_id}", status_code=204)
-def delete_student_handler(
+@router.delete("/{instructor_id}", status_code=204, tags=["Instructors"])
+def delete_instructor_handler(
     instructor_id: str,
-    session: Session = Depends(get_database)
+    repo: InstructorRepository = Depends()
 ):
-    query_result = session.scalar(select(Instructors).where(Instructors.instructor_id == instructor_id))
+    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
 
-    if query_result:
-        session.execute(delete(Instructors).where(Instructors.instructor_id == instructor_id))
-        session.commit()
+    if instructor:
+        repo.delete_instructor(instructor_id=instructor_id)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")

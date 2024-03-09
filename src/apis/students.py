@@ -2,77 +2,60 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 
 from database.database import get_database
 from database.database_orm import Students
 from schema.request import CreateStudentRequest
+from database.database_repo import StudentRepository
+from schema.response import StudentSchema
 
 router = APIRouter(prefix="/students")
 
-@router.get("/", status_code=200)
-def get_students_handler(session: Session = Depends(get_database)):
-    return list(session.scalars(select(Students)))
+@router.get("/", status_code=200, tags=["Students"])
+def get_students_handler(repo: StudentRepository = Depends()):
+    return repo.get_all_students()
 
-
-@router.get("/{student_id}", status_code=200)
+@router.get("/{student_id}", status_code=200, tags=["Students"])
 def get_students_by_id_handler(
     student_id: str,
-    session: Session = Depends(get_database)
+    repo: StudentRepository = Depends()
 ):
-    query_result = session.scalar(select(Students).where(Students.student_id == student_id))
-    if query_result:
-        return query_result
+    student = repo.get_student_by_id(student_id=student_id)
+    
+    if student:
+        return student
     raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {student_id}")
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, tags=["Students"])
 def post_create_student_id_handler(
     request: CreateStudentRequest,
-    session: Session = Depends(get_database)
-):
-    student = Students(
-        student_id=request.student_id,
-        student_pw=request.student_pw,
-        student_name=request.student_name,
-        student_contact=request.student_contact,
-        student_email=request.student_email,
-        student_birth_date=request.student_birth_date,
-        student_gender=request.student_gender,
-        join_date=date.today()
-    )
-
-    query_result = session.scalar(select(Students).where(Students.student_id == student.student_id))
+    repo: StudentRepository = Depends()
+) -> StudentSchema:
+    student: Students = Students.create(request=request)
+    student: Students = repo.create_student(student=student)
+    return StudentSchema.from_orm(student)
     
-    if not query_result:
-        session.add(student)
-        session.commit()
-    else:
-        raise HTTPException(status_code=409, detail="이미 존재하는 ID입니다.")
-    
-@router.patch("/{student_id}", status_code=200)
+@router.patch("/{student_id}", status_code=200, tags=["Students"])
 def patch_update_student_pw_by_id_handler(
     student_id: str,
     student_pw: str,
-    session: Session = Depends(get_database)
+    repo: StudentRepository = Depends()
 ):
-    query_result = session.scalar(select(Students).where(Students.student_id == student_id))
+    student = repo.get_student_by_id(student_id=student_id)
 
-    if query_result:
-        student = session.execute(select(Students).filter_by(student_id=student_id)).scalar_one()
-        student.student_pw = student_pw
-        session.commit()
+    if student:
+        repo.update_student_pw_by_id(student_id=student_id, student_pw=student_pw)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")
     
-@router.delete("/{student_id}", status_code=204)
+@router.delete("/{student_id}", status_code=204, tags=["Students"])
 def delete_student_handler(
     student_id: str,
-    session: Session = Depends(get_database)
+    repo: StudentRepository = Depends()
 ):
-    query_result = session.scalar(select(Students).where(Students.student_id == student_id))
+    student = repo.get_student_by_id(student_id=student_id)
 
-    if query_result:
-        session.execute(delete(Students).where(Students.student_id == student_id))
-        session.commit()
+    if student:
+        repo.delete_student(student_id=student_id)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")

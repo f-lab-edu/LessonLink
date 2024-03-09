@@ -1,6 +1,8 @@
 from sqlalchemy import Column, String, Date
 from sqlalchemy.orm import declarative_base
 
+from schema.request import CreateInstructorRequest, CreateStudentRequest
+
 Base = declarative_base()
 
 
@@ -29,6 +31,19 @@ class Students(Base):
             f")"
         ))
     
+    @classmethod
+    def create(cls, request: CreateStudentRequest) -> "Students":
+        return cls(
+            student_id = request.student_id,
+            student_pw = request.student_pw,
+            student_name = request.student_name,
+            student_contact = request.student_contact,
+            student_email = request.student_email,
+            student_birth_date = request.student_birth_date,
+            student_gender = request.student_gender,
+            join_date = request.join_date
+        )
+    
 class Instructors(Base):
     __tablename__ = "instructors"
 
@@ -51,3 +66,15 @@ class Instructors(Base):
             f"subject={self.subject!r}, ",
             f")"
         ))
+    
+    @classmethod
+    def create(cls, request: CreateInstructorRequest) -> "Instructors":
+        return cls(
+            instructor_id = request.instructor_id,
+            instructor_pw = request.instructor_pw,
+            instructor_name = request.instructor_name,
+            instructor_contact = request.instructor_contact,
+            instructor_email = request.instructor_email,
+            subject = request.subject
+        )
+    

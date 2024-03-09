@@ -10,6 +10,7 @@ class CreateStudentRequest(BaseModel):
     student_birth_date: date = None
     student_gender: str = None
     join_date: date = date.today()
+    
 
 class CreateInstructorRequest(BaseModel):
     instructor_id: str
