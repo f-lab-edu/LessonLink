@@ -28,3 +28,26 @@ class Students(Base):
             f"join_date={self.join_date!r}",
             f")"
         ))
+    
+class Instructors(Base):
+    __tablename__ = "instructors"
+
+    instructor_id: Column = Column(String(50), primary_key=True)
+    instructor_pw: Column = Column(String(50))
+    instructor_name: Column = Column(String(20))
+    instructor_contact: Column = Column(String(20))
+    instructor_email: Column = Column(String(20))
+    subject: Column = Column(String(20))
+
+
+    def __repr__(self):
+        return "".join((
+            f"Instructors(",
+            f"instructor_id={self.instructor_id!r}, ",
+            f"instructor_pw={self.instructor_pw!r}, ",
+            f"instructor_name={self.instructor_name!r}, ",
+            f"instructor_contact={self.instructor_contact}, ",
+            f"instructor_email={self.instructor_email!r}, ",
+            f"subject={self.subject!r}, ",
+            f")"
+        ))
