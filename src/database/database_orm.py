@@ -52,7 +52,6 @@ class Instructors(Base):
     instructor_name: Column = Column(String(20))
     instructor_contact: Column = Column(String(20))
     instructor_email: Column = Column(String(20))
-    subject: Column = Column(String(20))
 
 
     def __repr__(self):
@@ -63,7 +62,6 @@ class Instructors(Base):
             f"instructor_name={self.instructor_name!r}, ",
             f"instructor_contact={self.instructor_contact}, ",
             f"instructor_email={self.instructor_email!r}, ",
-            f"subject={self.subject!r}, ",
             f")"
         ))
     
@@ -75,6 +73,5 @@ class Instructors(Base):
             instructor_name = request.instructor_name,
             instructor_contact = request.instructor_contact,
             instructor_email = request.instructor_email,
-            subject = request.subject
         )
     

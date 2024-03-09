@@ -25,7 +25,6 @@ class InstructorSchema(BaseModel):
     instructor_name: str = None
     instructor_contact: str = None
     instructor_email: str = None
-    subject: str = None
 
     class Config:
         orm_mode = True
