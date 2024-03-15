@@ -3,7 +3,7 @@ from sqlalchemy import delete, select, update
 
 from database.database import get_database
 from database.database_orm import Students
-from schema.request import CreateStudentRequest, PasswordUpdateRequest
+from schema.request import CreateStudentRequest, UpdatePasswordRequest
 from database.database_repo import StudentRepository
 from schema.response import StudentSchema
 
@@ -16,7 +16,7 @@ def get_students_handler(repo: StudentRepository = Depends()):
     return repo.get_all_students()
 
 @router.get("/{id}", status_code=200, tags=["Students"])
-def get_students_by_id_handler(
+def get_student_by_id_handler(
     id: str,
     repo: StudentRepository = Depends()
 ):
@@ -38,7 +38,7 @@ def post_create_id_handler(
 @router.patch("/{id}", status_code=200, tags=["Students"])
 def patch_update_student_pw_by_id_handler(
     id: str,
-    request: PasswordUpdateRequest,
+    request: UpdatePasswordRequest,
     repo: StudentRepository = Depends()
 ):
     student = repo.get_student_by_id(id=id)

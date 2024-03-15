@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Date, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 
-from src.schema.request import CreateInstructorRequest, CreateStudentRequest
+from schema.request import CreateCourseRequest, CreateInstructorRequest, CreateStudentRequest
 
 import bcrypt
 
@@ -91,10 +91,21 @@ class Courses(Base):
 
     instructors = relationship("Instructors", back_populates="courses")
 
-    course_id = Column(Integer, primary_key=True)
-    course_name = Column(String(20))
-    course_description = Column(String(256))
-    course_start_date = Column(Date)
-    course_end_date = Column(Date)
-    id = Column(String(50), ForeignKey('instructors.id'))
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20))
+    description = Column(String(256))
+    start_date = Column(Date)
+    end_date = Column(Date)
+    instructor_id = Column(String(50), ForeignKey('instructors.id'))
 
+    @classmethod
+    def create(cls, request: CreateCourseRequest) -> "Courses":
+
+        return cls(
+            id = request.id,
+            name = request.name,
+            description = request.description,
+            start_date = request.start_date,
+            end_date = request.end_date,
+            instructor_id = request.instructor_id
+        )

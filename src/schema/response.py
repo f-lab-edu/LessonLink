@@ -32,3 +32,18 @@ class InstructorSchema(BaseModel):
 
 class InstructorListSchema(BaseModel):
     students: List[InstructorSchema]
+
+class CourseSchema(BaseModel):
+    id: int
+    name: str = None
+    description: str = None
+    start_date: date = None
+    end_date: date = None
+    instructor_id: str = None
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+class CourseListSchema(BaseModel):
+    students: List[CourseSchema]

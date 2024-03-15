@@ -19,5 +19,21 @@ class CreateInstructorRequest(BaseModel):
     contact: str = None
     email: str = None
 
-class PasswordUpdateRequest(BaseModel):
+class UpdatePasswordRequest(BaseModel):
     pw: str
+
+class CreateCourseRequest(BaseModel):
+    id: int
+    name: str = None
+    description: str = None
+    start_date: date = None
+    end_date: date = None
+    instructor_id: str = None
+
+class UpdateCourseRequest(BaseModel):
+    id: int
+    name: str = None
+    description: str = None
+    start_date: date = None
+    end_date: date = None
+    instructor_id: str = None

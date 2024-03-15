@@ -4,7 +4,7 @@ from sqlalchemy import delete, select, update
 
 from database.database import get_database
 from database.database_orm import Instructors
-from schema.request import CreateInstructorRequest, PasswordUpdateRequest
+from schema.request import CreateInstructorRequest, UpdatePasswordRequest
 from database.database_repo import InstructorRepository
 from schema.response import InstructorSchema
 
@@ -37,7 +37,7 @@ def post_create_instructor_handler(
 @router.patch("/{id}", status_code=200, tags=["Instructors"])
 def patch_update_instructor_pw_by_id_handler(
     id: str,
-    request: PasswordUpdateRequest,
+    request: UpdatePasswordRequest,
     repo: InstructorRepository = Depends()
 ):
     instructor = repo.get_instructor_by_id(id=id)
