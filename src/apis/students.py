@@ -18,7 +18,7 @@ def get_students_by_id_handler(
     student_id: str,
     repo: StudentRepository = Depends()
 ):
-    student = repo.get_student_by_id(student_id=student_id)
+    student = repo.get_student_by_id(id=student_id)
     
     if student:
         return student

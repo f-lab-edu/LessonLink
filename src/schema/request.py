@@ -2,13 +2,13 @@ from pydantic import BaseModel
 from datetime import date
 
 class CreateStudentRequest(BaseModel):
-    student_id: str
-    student_pw: str = None
-    student_name: str = None
-    student_contact: str = None
-    student_email: str = None
-    student_birth_date: date = None
-    student_gender: str = None
+    id: str
+    pw: str = None
+    name: str = None
+    contact: str = None
+    email: str = None
+    birth_date: date = None
+    gender: str = None
     join_date: date = date.today()
 
 
@@ -18,3 +18,4 @@ class CreateInstructorRequest(BaseModel):
     instructor_name: str = None
     instructor_contact: str = None
     instructor_email: str = None
+

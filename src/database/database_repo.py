@@ -13,11 +13,10 @@ class StudentRepository:
         self.session = session
 
     def get_all_students(self) -> List[Students]:
-        print('test')
         return list(self.session.scalars(select(Students)))
     
-    def get_student_by_id(self, student_id) -> Students | None:
-        return self.session.scalar(select(Students).where(Students.student_id == student_id))
+    def get_student_by_id(self, id) -> Students | None:
+        return self.session.scalar(select(Students).where(Students.id == id))
     
     def create_student(self, student: Students) -> Students:
         try:
@@ -28,14 +27,14 @@ class StudentRepository:
         except IntegrityError as e:
             raise HTTPException(status_code=409, detail="ID already exist.")
         
-    def update_student_pw_by_id(self, student_id: str, student_pw: str):
-        student = self.session.execute(select(Students).filter_by(student_id=student_id)).scalar_one()
-        student.student_pw = student_pw
+    def update_student_pw_by_id(self, id: str, pw: str):
+        student = self.session.execute(select(Students).filter_by(id=id)).scalar_one()
+        student.pw = pw
         self.session.commit()
         self.session.refresh(instance=student)
 
-    def delete_student(self, student_id: str):
-        self.session.execute(delete(Students).where(Students.student_id == student_id))
+    def delete_student(self, id: str):
+        self.session.execute(delete(Students).where(Students.id == id))
         self.session.commit()
         
 
