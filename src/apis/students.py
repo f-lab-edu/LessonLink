@@ -3,9 +3,11 @@ from sqlalchemy import delete, select, update
 
 from database.database import get_database
 from database.database_orm import Students
-from schema.request import CreateStudentRequest
+from schema.request import CreateStudentRequest, PasswordUpdateRequest
 from database.database_repo import StudentRepository
 from schema.response import StudentSchema
+
+import bcrypt
 
 router = APIRouter(prefix="/students")
 
@@ -36,13 +38,14 @@ def post_create_id_handler(
 @router.patch("/{id}", status_code=200, tags=["Students"])
 def patch_update_student_pw_by_id_handler(
     id: str,
-    pw: str,
+    request: PasswordUpdateRequest,
     repo: StudentRepository = Depends()
 ):
     student = repo.get_student_by_id(id=id)
 
     if student:
-        repo.update_student_pw_by_id(id=id, pw=pw)
+        encrypted_pw = bcrypt.hashpw(request.pw.encode(), salt=bcrypt.gensalt())
+        repo.update_student_pw_by_id(id=id, pw=encrypted_pw)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")
     

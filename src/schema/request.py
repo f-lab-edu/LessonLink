@@ -19,3 +19,5 @@ class CreateInstructorRequest(BaseModel):
     contact: str = None
     email: str = None
 
+class PasswordUpdateRequest(BaseModel):
+    pw: str

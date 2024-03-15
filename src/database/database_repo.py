@@ -45,7 +45,7 @@ class InstructorRepository:
     def get_all_instructors(self) -> List[Instructors]:
         return list(self.session.scalars(select(Instructors)))
     
-    def get_by_id(self, id: str) -> Instructors | None:
+    def get_instructor_by_id(self, id: str) -> Instructors | None:
         return self.session.scalar(select(Instructors).where(Instructors.id == id))
     
     def create_instructor(self, instructor: Instructors) -> Instructors:
@@ -57,7 +57,7 @@ class InstructorRepository:
         except IntegrityError as e:
             raise HTTPException(status_code=409, detail="ID already exist.")
         
-    def update_pw_by_id(self, id: str, pw: str):
+    def update_instructor_pw_by_id(self, id: str, pw: str):
         instructor = self.session.execute(select(Instructors).filter_by(id=id)).scalar_one()
         instructor.pw = pw
         self.session.commit()

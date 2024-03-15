@@ -1,9 +1,10 @@
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete, select, update
 
 from database.database import get_database
 from database.database_orm import Instructors
-from schema.request import CreateInstructorRequest
+from schema.request import CreateInstructorRequest, PasswordUpdateRequest
 from database.database_repo import InstructorRepository
 from schema.response import InstructorSchema
 
@@ -36,13 +37,14 @@ def post_create_instructor_handler(
 @router.patch("/{id}", status_code=200, tags=["Instructors"])
 def patch_update_instructor_pw_by_id_handler(
     id: str,
-    pw: str,
+    request: PasswordUpdateRequest,
     repo: InstructorRepository = Depends()
 ):
     instructor = repo.get_instructor_by_id(id=id)
 
     if instructor:
-        repo.update_instructor_pw_by_id(id=id, pw=pw)
+        encrypted_pw = bcrypt.hashpw(request.pw.encode(), salt=bcrypt.gensalt())
+        repo.update_instructor_pw_by_id(id=id, pw=encrypted_pw)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")
     

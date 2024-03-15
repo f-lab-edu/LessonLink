@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Date, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 
-from src.schema.request import CreateInstructorRequest, CreateStudentRequest
+from schema.request import CreateInstructorRequest, CreateStudentRequest
 
 import bcrypt
 
