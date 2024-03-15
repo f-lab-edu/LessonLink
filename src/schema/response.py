@@ -20,11 +20,11 @@ class StudentListSchema(BaseModel):
     students: List[StudentSchema]
 
 class InstructorSchema(BaseModel):
-    instructor_id: str
-    instructor_pw: str = None
-    instructor_name: str = None
-    instructor_contact: str = None
-    instructor_email: str = None
+    id: str
+    pw: str = None
+    name: str = None
+    contact: str = None
+    email: str = None
 
     class Config:
         orm_mode = True

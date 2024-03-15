@@ -50,31 +50,31 @@ class Instructors(Base):
 
     courses = relationship("Courses", back_populates="instructors")
 
-    instructor_id: Column = Column(String(50), primary_key=True)
-    instructor_pw: Column = Column(String(50))
-    instructor_name: Column = Column(String(20))
-    instructor_contact: Column = Column(String(20))
-    instructor_email: Column = Column(String(20))
+    id: Column = Column(String(50), primary_key=True)
+    pw: Column = Column(String(50))
+    name: Column = Column(String(20))
+    contact: Column = Column(String(20))
+    email: Column = Column(String(50))
 
     def __repr__(self):
         return "".join((
             f"Instructors(",
-            f"instructor_id={self.instructor_id!r}, ",
-            f"instructor_pw={self.instructor_pw!r}, ",
-            f"instructor_name={self.instructor_name!r}, ",
-            f"instructor_contact={self.instructor_contact}, ",
-            f"instructor_email={self.instructor_email!r}, ",
+            f"id={self.id!r}, ",
+            f"pw={self.pw!r}, ",
+            f"name={self.name!r}, ",
+            f"contact={self.contact}, ",
+            f"email={self.email!r}, ",
             f")"
         ))
     
     @classmethod
     def create(cls, request: CreateInstructorRequest) -> "Instructors":
         return cls(
-            instructor_id = request.instructor_id,
-            instructor_pw = request.instructor_pw,
-            instructor_name = request.instructor_name,
-            instructor_contact = request.instructor_contact,
-            instructor_email = request.instructor_email,
+            id = request.id,
+            pw = request.pw,
+            name = request.name,
+            contact = request.contact,
+            email = request.email,
         )
     
 
@@ -88,5 +88,5 @@ class Courses(Base):
     course_description = Column(String(256))
     course_start_date = Column(Date)
     course_end_date = Column(Date)
-    instructor_id = Column(String(50), ForeignKey('instructors.instructor_id'))
+    id = Column(String(50), ForeignKey('instructors.id'))
 

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy import delete, select, update
 
 from database.database import get_database
@@ -14,16 +13,16 @@ router = APIRouter(prefix="/instructors")
 def get_instructor_handler(repo: InstructorRepository = Depends()):
     return repo.get_all_instructors()
 
-@router.get("/{instructor_id}", status_code=200, tags=["Instructors"])
+@router.get("/{id}", status_code=200, tags=["Instructors"])
 def get_instructor_by_id_handler(
-    instructor_id: str,
+    id: str,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
+    instructor = repo.get_instructor_by_id(id=id)
     
-    if instructor_id:
+    if id:
         return instructor
-    raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {instructor_id}")
+    raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {id}")
 
 @router.post("/", status_code=201, tags=["Instructors"])
 def post_create_instructor_handler(
@@ -34,27 +33,27 @@ def post_create_instructor_handler(
     instructor: Instructors = repo.create_instructor(instructor=instructor)
     return InstructorSchema.from_orm(instructor)
     
-@router.patch("/{instructor_id}", status_code=200, tags=["Instructors"])
+@router.patch("/{id}", status_code=200, tags=["Instructors"])
 def patch_update_instructor_pw_by_id_handler(
-    instructor_id: str,
-    instructor_pw: str,
+    id: str,
+    pw: str,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
+    instructor = repo.get_instructor_by_id(id=id)
 
     if instructor:
-        repo.update_instructor_pw_by_id(instructor_id=instructor_id, instructor_pw=instructor_pw)
+        repo.update_instructor_pw_by_id(id=id, pw=pw)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")
     
-@router.delete("/{instructor_id}", status_code=204, tags=["Instructors"])
+@router.delete("/{id}", status_code=204, tags=["Instructors"])
 def delete_instructor_handler(
-    instructor_id: str,
+    id: str,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(instructor_id=instructor_id)
+    instructor = repo.get_instructor_by_id(id=id)
 
     if instructor:
-        repo.delete_instructor(instructor_id=instructor_id)
+        repo.delete_instructor(id=id)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")

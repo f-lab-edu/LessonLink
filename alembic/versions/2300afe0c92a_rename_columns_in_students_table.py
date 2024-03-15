@@ -1,4 +1,4 @@
-"""Rename columns in students table
+"""Rename columns in instructors table
 
 Revision ID: 2300afe0c92a
 Revises: 
