@@ -74,9 +74,12 @@ class Instructors(Base):
     
     @classmethod
     def create(cls, request: CreateInstructorRequest) -> "Instructors":
+
+        encrypted_pw = bcrypt.hashpw(request.pw.encode(), bcrypt.gensalt())
+
         return cls(
             id = request.id,
-            pw = request.pw,
+            pw = encrypted_pw,
             name = request.name,
             contact = request.contact,
             email = request.email,
