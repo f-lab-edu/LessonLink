@@ -1,7 +1,5 @@
-from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete, select, update
-from sqlalchemy.orm import Session
 
 from database.database import get_database
 from database.database_orm import Students

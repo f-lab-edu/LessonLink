@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Date
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, String, Date, Integer, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
 
 from schema.request import CreateInstructorRequest, CreateStudentRequest
 
@@ -53,7 +53,6 @@ class Instructors(Base):
     instructor_contact: Column = Column(String(20))
     instructor_email: Column = Column(String(20))
 
-
     def __repr__(self):
         return "".join((
             f"Instructors(",
@@ -75,3 +74,17 @@ class Instructors(Base):
             instructor_email = request.instructor_email,
         )
     
+
+class Courses(Base):
+    __tablename__ = "courses"
+
+    course_id = Column(Integer, primary_key=True)
+    course_name = Column(String(20))
+    course_description = Column(String(256))
+    course_start_date = Column(Date)
+    course_end_date = Column(Date)
+    instructor_id = Column(String(50), ForeignKey('instructors.instructor_id'))
+
+    instructors = relationship("Instructors", back_populates="courses")
+
+

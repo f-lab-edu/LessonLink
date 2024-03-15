@@ -4,14 +4,16 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from database.database_orm import Instructors, Students
+from database.database_orm import Courses, Instructors, Students
 from database.database import get_database
+
 
 class StudentRepository:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
     def get_all_students(self) -> List[Students]:
+        print('test')
         return list(self.session.scalars(select(Students)))
     
     def get_student_by_id(self, student_id) -> Students | None:
@@ -36,6 +38,7 @@ class StudentRepository:
         self.session.execute(delete(Students).where(Students.student_id == student_id))
         self.session.commit()
         
+
 class InstructorRepository:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
@@ -64,3 +67,11 @@ class InstructorRepository:
     def delete_instructor(self, instructor_id: str):
         self.session.execute(delete(Instructors).where(Instructors.instructor_id == instructor_id))
         self.session.commit()
+
+
+class CoursesRepository:
+    def __init__(self, session: Session = Depends(get_database)):
+        self.session = session
+
+    def get_all_courses(self) -> List[Courses]:
+        return list(self.session.scalars(select(Courses)))
