@@ -1,7 +1,9 @@
 from sqlalchemy import Column, String, Date, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 
-from schema.request import CreateInstructorRequest, CreateStudentRequest
+from src.schema.request import CreateInstructorRequest, CreateStudentRequest
+
+import bcrypt
 
 Base = declarative_base()
 
@@ -10,7 +12,7 @@ class Students(Base):
     __tablename__ = "students"
 
     id: Column = Column(String(50), primary_key=True)
-    pw: Column = Column(String(50))
+    pw: Column = Column(String(255))
     name: Column = Column(String(20))
     contact: Column = Column(String(20))
     email: Column = Column(String(50))
@@ -34,9 +36,12 @@ class Students(Base):
     
     @classmethod
     def create(cls, request: CreateStudentRequest) -> "Students":
+
+        encrypted_pw = bcrypt.hashpw(request.pw.encode(), bcrypt.gensalt())
+
         return cls(
             id = request.id,
-            pw = request.pw,
+            pw = encrypted_pw.decode(),
             name = request.name,
             contact = request.contact,
             email = request.email,
@@ -51,7 +56,7 @@ class Instructors(Base):
     courses = relationship("Courses", back_populates="instructors")
 
     id: Column = Column(String(50), primary_key=True)
-    pw: Column = Column(String(50))
+    pw: Column = Column(String(255))
     name: Column = Column(String(20))
     contact: Column = Column(String(20))
     email: Column = Column(String(50))
