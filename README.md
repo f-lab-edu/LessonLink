@@ -104,9 +104,9 @@ make install-dev
 flowchart LR
     subgraph "API"
         direction TB
-        router_a["router_a.py"]
-        router_b["router_b.py"]
-        router_c["router_c.py"]
+        router_a["students.py"]
+        router_b["instructors.py"]
+        router_c["courses.py"]
         router_a -.- router_b -.- router_c
     end
     subgraph "Model"
@@ -116,14 +116,14 @@ flowchart LR
         model_c["model_c.py"]
         model_a -.- model_b -.- model_c
     end
-    subgraph "Persistence"
+    subgraph "Database"
         direction TB
         database["database.py"]
     end
     main.py --> API
     API --> Model
-    API --> Persistence
-    Persistence --> Model
+    API --> Database
+    Database --> Model
 ```
 
 - Layer는 크게 3가지로 나눠집니다.
