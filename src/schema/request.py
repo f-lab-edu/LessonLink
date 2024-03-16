@@ -31,7 +31,6 @@ class CreateCourseRequest(BaseModel):
     instructor_id: str = None
 
 class UpdateCourseRequest(BaseModel):
-    id: int
     name: str = None
     description: str = None
     start_date: date = None

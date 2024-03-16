@@ -31,15 +31,27 @@ def post_create_course_handler(
     course: Courses = repo.create_course(course=course)
     return CourseSchema.from_orm(course)
 
-# @router.patch("/{id}", status_code=200, tags=["Courses"])
-# def patch_course_handler(
-#     id: int,
-#     request: UpdateCourseRequest,
-#     repo: CoursesRepository = Depends()
-# ):
-#     course = repo.get_course_by_id(id=id)
+@router.patch("/{id}", status_code=200, tags=["Courses"])
+def patch_course_handler(
+    id: int,
+    request: UpdateCourseRequest,
+    repo: CoursesRepository = Depends()
+):
+    course = repo.get_course_by_id(id=id)
 
-#     if course:
-#         repo.update_student_pw_by_id(id=id)
-#     else:
-#         raise HTTPException(status_code=404, detail="Course Not Found")
+    if course:
+        repo.update_course_by_id(id=id, request=request)
+    else:
+        raise HTTPException(status_code=404, detail="Course Not Found")
+    
+@router.delete("/{id}", status_code=204, tags=["Courses"])
+def delete_student_handler(
+    id: int,
+    repo: CoursesRepository = Depends()
+):
+    course = repo.get_course_by_id(id=id)
+
+    if course:
+        repo.delete_course(id=id)
+    else:
+        raise HTTPException(status_code=404, detail="Student Not Found")

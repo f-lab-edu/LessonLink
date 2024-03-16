@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from database.database_orm import Courses, Instructors, Students
 from database.database import get_database
+from schema.request import UpdateCourseRequest
 
 
 class StudentRepository:
@@ -87,5 +88,22 @@ class CoursesRepository:
         except IntegrityError as e:
             raise HTTPException(status_code=409, detail="ID already exist.")
         
-    # def update_course_by_id(self, id: int):
-    #     pass
+    def update_course_by_id(self, id: int, request: UpdateCourseRequest):
+
+        course = self.session.execute(select(Courses).filter_by(id=id)).scalar_one()
+        if course:
+            course.name = request.name
+            course.description = request.description
+            course.start_date = request.start_date
+            course.end_date = request.end_date
+            course.instructor_id = request.instructor_id
+
+            self.session.commit()
+            self.session.refresh(instance=course)
+
+        else:
+            raise HTTPException(status_code=404, detail="Course Not Found")
+
+    def delete_course(self, id: int):
+        self.session.execute(delete(Courses).where(Courses.id == id))
+        self.session.commit()
