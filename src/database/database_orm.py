@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Date, Integer, ForeignKey, Time
 from sqlalchemy.orm import declarative_base, relationship
 
-from schema.request import CreateCourseRequest, CreateInstructorRequest, CreateStudentRequest
+from schema.request import CreateCourseRequest, CreateInstructorRequest, CreateStudentRequest, CreateClassroomRequest, CreateReservationRequest, CreateScheduleRequest
 
 import bcrypt
 
@@ -52,6 +52,7 @@ class Students(Base):
             join_date = request.join_date
         )
     
+
 class Instructors(Base):
     __tablename__ = "instructors"
 
@@ -112,6 +113,7 @@ class Courses(Base):
             instructor_id = request.instructor_id
         )
     
+
 class Classrooms(Base):
     __tablename__ = "classrooms"
 
@@ -123,6 +125,18 @@ class Classrooms(Base):
 
     schedules = relationship("Schedules", back_populates="classrooms")
 
+    @classmethod
+    def create(cls, request: CreateClassroomRequest) -> "Classrooms":
+
+        return cls(
+            id = request.id,
+            name = request.name,
+            capacity = request.capacity,
+            location = request.location,
+            building_name = request.building_name
+        )
+
+
 class Schedules(Base):
     __tablename__ = "schedules"
 
@@ -131,10 +145,22 @@ class Schedules(Base):
     classroom_id = Column(Integer, ForeignKey('classrooms.id'), nullable=True)
     start_time = Column(Time, nullable=True)
     end_time = Column(Time, nullable=True)
-    date = Column(Date, nullable=True)
+    course_date = Column(Date, nullable=True)
 
     courses = relationship("Courses", back_populates="schedules")
     classrooms = relationship("Classrooms", back_populates="schedules")
+
+    @classmethod
+    def create(cls, request: CreateScheduleRequest) -> "Schedules":
+
+        return cls(
+            id = request.id,
+            course_id = request.course_id,
+            classroom_id = request.classroom_id,
+            start_time = request.start_time,
+            end_time = request.end_time,
+            course_date = request.course_date
+        )
 
 class Reservations(Base):
     __tablename__ = "reservations"
@@ -143,11 +169,25 @@ class Reservations(Base):
     student_id = Column(String(50), ForeignKey('students.id'), nullable=False)
     course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
     schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
-    date = Column(Date, nullable=False)
-    time = Column(Time, nullable=False)
+    reservated_date = Column(Date, nullable=False)
+    reservated_time = Column(Time, nullable=False)
     status = Column(String(20), nullable=False)
     notes = Column(String(255), nullable=True)
 
     students = relationship("Students", back_populates="reservations")
     courses = relationship("Courses", back_populates="reservations")
     schedules = relationship("Schedules", back_populates="reservations")
+
+    @classmethod
+    def create(cls, request: CreateReservationRequest) -> "Reservations":
+
+        return cls(
+            id = request.id,
+            student_id = request.student_id,
+            course_id = request.course_id,
+            schedule_id = request.schedule_id,
+            reservated_date = request.reservated_date,
+            reservated_time = request.reservated_time,
+            status = request.status,
+            notes = request.notes
+        )
