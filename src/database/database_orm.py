@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date, Integer, ForeignKey
+from sqlalchemy import Column, String, Date, Integer, ForeignKey, Time
 from sqlalchemy.orm import declarative_base, relationship
 
 from schema.request import CreateCourseRequest, CreateInstructorRequest, CreateStudentRequest
@@ -19,6 +19,8 @@ class Students(Base):
     birth_date: Column = Column(Date)
     gender: Column = Column(String(10))
     join_date: Column = Column(Date)
+
+    reservations = relationship("Reservations", back_populates="student")
 
     def __repr__(self):
         return "".join((
@@ -53,13 +55,13 @@ class Students(Base):
 class Instructors(Base):
     __tablename__ = "instructors"
 
-    courses = relationship("Courses", back_populates="instructors")
-
     id: Column = Column(String(50), primary_key=True)
     pw: Column = Column(String(255))
     name: Column = Column(String(20))
     contact: Column = Column(String(20))
     email: Column = Column(String(50))
+
+    courses = relationship("Courses", back_populates="instructors")
 
     def __repr__(self):
         return "".join((
@@ -89,14 +91,14 @@ class Instructors(Base):
 class Courses(Base):
     __tablename__ = "courses"
 
-    instructors = relationship("Instructors", back_populates="courses")
-
     id = Column(Integer, primary_key=True)
     name = Column(String(20))
     description = Column(String(256))
     start_date = Column(Date)
     end_date = Column(Date)
     instructor_id = Column(String(50), ForeignKey('instructors.id'))
+
+    instructors = relationship("Instructors", back_populates="courses")
 
     @classmethod
     def create(cls, request: CreateCourseRequest) -> "Courses":
@@ -109,3 +111,43 @@ class Courses(Base):
             end_date = request.end_date,
             instructor_id = request.instructor_id
         )
+    
+class Classrooms(Base):
+    __tablename__ = "classrooms"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False, unique=True)
+    capacity = Column(Integer, nullable=True)
+    location = Column(String(100), nullable=True)
+    building_name = Column(String(100), nullable=True)
+
+    schedules = relationship("Schedules", back_populates="classrooms")
+
+class Schedules(Base):
+    __tablename__ = "schedules"
+
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey('courses.id'), nullable=True)
+    classroom_id = Column(Integer, ForeignKey('classrooms.id'), nullable=True)
+    start_time = Column(Time, nullable=True)
+    end_time = Column(Time, nullable=True)
+    date = Column(Date, nullable=True)
+
+    courses = relationship("Courses", back_populates="schedules")
+    classrooms = relationship("Classrooms", back_populates="schedules")
+
+class Reservations(Base):
+    __tablename__ = "reservations"
+
+    id = Column(Integer, primary_key=True)
+    student_id = Column(String(50), ForeignKey('students.id'), nullable=False)
+    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
+    schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
+    status = Column(String(20), nullable=False)
+    notes = Column(String(255), nullable=True)
+
+    students = relationship("Students", back_populates="reservations")
+    courses = relationship("Courses", back_populates="reservations")
+    schedules = relationship("Schedules", back_populates="reservations")
