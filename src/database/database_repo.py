@@ -73,11 +73,39 @@ class CoursesRepository:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
-    def get_all_courses(self) -> List[Courses]:
-        return list(self.session.scalars(select(Courses)))
+    def get_all_courses(self):
+        results = self.session.execute(
+            select(Courses, Instructors.name, Instructors.contact, Instructors.email)
+            .join(Instructors, Instructors.id == Courses.instructor_id)
+        ).all()
+
+
+        courses_list = []
+        for course, instructor_name, instructor_contact, instructor_email in results:
+
+            course.instructor_name = instructor_name
+            course.instructor_contact = instructor_contact
+            course.instructor_email = instructor_email
+            courses_list.append(course)
+
+        return courses_list
     
     def get_course_by_id(self, id: int) -> Courses | None:
-        return self.session.scalar(select(Courses).where(Courses.id == id))
+        result = self.session.execute(
+            select(Courses, Instructors.name, Instructors.contact, Instructors.email)
+            .join(Instructors, Instructors.id == Courses.instructor_id)
+            .where(Courses.id == id)
+        ).first()
+
+        if result is None:
+            raise HTTPException(status_code=404, detail="Course Not Found")
+
+        course, instructor_name, instructor_contact, instructor_email = result
+        course.instructor_name = instructor_name
+        course.instructor_contact = instructor_contact
+        course.instructor_email = instructor_email
+
+        return course
     
     def create_course(self, course: Courses) -> Courses:
         try:
