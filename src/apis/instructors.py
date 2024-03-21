@@ -21,7 +21,7 @@ def get_instructor_by_id_handler(
     
     if id:
         return instructor
-    raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {id}")
+    raise HTTPException(status_code=404, detail=f"Not found instructor infomation of id = {id}")
 
 @router.post("/", status_code=201, tags=["Instructors"])
 def post_create_instructor_handler(

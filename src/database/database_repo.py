@@ -4,9 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from database.database_orm import Courses, Instructors, Students
+from database.database_orm import Classrooms, Courses, Instructors, Students
 from database.database import get_database
-from schema.request import UpdateCourseRequest
+from schema.request import UpdateClassroomRequest, UpdateCourseRequest
 
 class Repository:
     def __init__(self, session: Session = Depends(get_database)):
@@ -137,8 +137,36 @@ class CoursesRepository(Repository):
         self.session.commit()
 
 class ClassroomsRepository(Repository):
-    pass
+    def get_all_classrooms(self) -> List[Classrooms]:
+        return list(self.session.scalars(select(Classrooms)))
 
+    def get_classroom_by_id(self, id: int) -> Classrooms | None:
+        return self.session.scalar(select(Classrooms).where(Classrooms.id == id))
+
+    def create_classrooms(self, classroom: Classrooms) -> Classrooms:
+        self.session.add(instance=classroom)
+        self.session.commit()
+        self.session.refresh(instance=classroom)
+        return classroom
+    
+    def update_classroom_by_id(self, id: int, request: UpdateClassroomRequest):
+
+        classroom = self.session.execute(select(Classrooms).filter_by(id=id)).scalar_one()
+        if classroom:
+            classroom.name = request.name
+            classroom.location = request.location
+            classroom.capacity = request.capacity
+            classroom.building_name = request.building_name
+
+            self.session.commit()
+            self.session.refresh(instance=classroom)
+
+        else:
+            raise HTTPException(status_code=404, detail="Classroom Not Found")
+        
+    def delete_classroom(self, id: int):
+        self.session.execute(delete(Classrooms).where(Classrooms.id == id))
+        self.session.commit()
 
 class SchedulesRepository(Repository):
     pass

@@ -131,7 +131,6 @@ class Classrooms(Base):
     def create(cls, request: CreateClassroomRequest) -> "Classrooms":
 
         return cls(
-            id = request.id,
             name = request.name,
             capacity = request.capacity,
             location = request.location,

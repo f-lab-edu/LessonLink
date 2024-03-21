@@ -48,6 +48,13 @@ class CreateClassroomRequest(BaseModel):
     building_name: str = None
 
 
+class UpdateClassroomRequest(BaseModel):
+    name: str
+    capacity: int = None
+    location: str = None
+    building_name: str = None
+
+
 class CreateScheduleRequest(BaseModel):
     course_id: int = None
     classroom_id: int = None
