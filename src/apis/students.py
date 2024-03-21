@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import delete, select, update
 
-from database.database import get_database
 from database.database_orm import Students
 from schema.request import CreateStudentRequest, UpdatePasswordRequest
 from database.database_repo import StudentRepository

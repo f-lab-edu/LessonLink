@@ -1,8 +1,6 @@
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import delete, select, update
 
-from database.database import get_database
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest, UpdatePasswordRequest
 from database.database_repo import InstructorRepository

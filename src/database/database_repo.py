@@ -8,10 +8,12 @@ from database.database_orm import Courses, Instructors, Students
 from database.database import get_database
 from schema.request import UpdateCourseRequest
 
-
-class StudentRepository:
+class Repository:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
+
+
+class StudentRepository(Repository):
 
     def get_all_students(self) -> List[Students]:
         return list(self.session.scalars(select(Students)))
@@ -39,9 +41,8 @@ class StudentRepository:
         self.session.commit()
         
 
-class InstructorRepository:
-    def __init__(self, session: Session = Depends(get_database)):
-        self.session = session
+class InstructorRepository(Repository):
+
 
     def get_all_instructors(self) -> List[Instructors]:
         return list(self.session.scalars(select(Instructors)))
@@ -69,9 +70,8 @@ class InstructorRepository:
         self.session.commit()
 
 
-class CoursesRepository:
-    def __init__(self, session: Session = Depends(get_database)):
-        self.session = session
+class CoursesRepository(Repository):
+
 
     def get_all_courses(self):
         results = self.session.execute(
@@ -135,3 +135,14 @@ class CoursesRepository:
     def delete_course(self, id: int):
         self.session.execute(delete(Courses).where(Courses.id == id))
         self.session.commit()
+
+class ClassroomsRepository(Repository):
+    pass
+
+
+class SchedulesRepository(Repository):
+    pass
+
+
+class ReservationRepository(Repository):
+    pass

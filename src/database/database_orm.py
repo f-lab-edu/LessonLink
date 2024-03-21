@@ -20,7 +20,7 @@ class Students(Base):
     gender: Column = Column(String(10))
     join_date: Column = Column(Date)
 
-    reservations = relationship("Reservations", back_populates="student")
+    reservations = relationship("Reservations", back_populates="students")
 
     def __repr__(self):
         return "".join((
@@ -100,6 +100,8 @@ class Courses(Base):
     instructor_id = Column(String(50), ForeignKey('instructors.id'))
 
     instructors = relationship("Instructors", back_populates="courses")
+    schedules = relationship("Schedules", back_populates="courses")
+    reservations = relationship("Reservations", back_populates="courses")
 
     @classmethod
     def create(cls, request: CreateCourseRequest) -> "Courses":
@@ -149,6 +151,7 @@ class Schedules(Base):
 
     courses = relationship("Courses", back_populates="schedules")
     classrooms = relationship("Classrooms", back_populates="schedules")
+    reservations = relationship("Reservations", back_populates="schedules")
 
     @classmethod
     def create(cls, request: CreateScheduleRequest) -> "Schedules":
