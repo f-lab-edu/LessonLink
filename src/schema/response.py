@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import List
 
 class StudentSchema(BaseModel):
@@ -71,8 +71,8 @@ class ClassroomListSchema(BaseModel):
 class ScheduleSchema(BaseModel):
     course_id: int = None
     classroom_id: int = None
-    start_time: datetime = None
-    end_time: datetime = None
+    start_time: time = None
+    end_time: time = None
     course_date: date = None
 
     class Config:

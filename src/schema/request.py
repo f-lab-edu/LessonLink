@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 class CreateStudentRequest(BaseModel):
     id: str
@@ -58,12 +58,29 @@ class UpdateClassroomRequest(BaseModel):
 class CreateScheduleRequest(BaseModel):
     course_id: int = None
     classroom_id: int = None
-    start_time: datetime = None
-    end_time: datetime = None
+    start_time: time = None
+    end_time: time = None
+    course_date: date = None
+
+
+class UpdateScheduleRequest(BaseModel):
+    course_id: int = None
+    classroom_id: int = None
+    start_time: time = None
+    end_time: time = None
     course_date: date = None
 
 
 class CreateReservationRequest(BaseModel):
+    student_id: str
+    course_id: int
+    schedule_id: int
+    reservated_date: date
+    reservated_time: datetime
+    status: str
+    notes: str = None
+
+class UpdateReservationRequest(BaseModel):
     student_id: str
     course_id: int
     schedule_id: int

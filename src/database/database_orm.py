@@ -156,7 +156,6 @@ class Schedules(Base):
     def create(cls, request: CreateScheduleRequest) -> "Schedules":
 
         return cls(
-            id = request.id,
             course_id = request.course_id,
             classroom_id = request.classroom_id,
             start_time = request.start_time,
@@ -184,7 +183,6 @@ class Reservations(Base):
     def create(cls, request: CreateReservationRequest) -> "Reservations":
 
         return cls(
-            id = request.id,
             student_id = request.student_id,
             course_id = request.course_id,
             schedule_id = request.schedule_id,

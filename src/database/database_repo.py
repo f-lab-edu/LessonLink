@@ -4,9 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from database.database_orm import Classrooms, Courses, Instructors, Students
+from database.database_orm import Classrooms, Courses, Instructors, Reservations, Schedules, Students
 from database.database import get_database
-from schema.request import UpdateClassroomRequest, UpdateCourseRequest
+from schema.request import UpdateClassroomRequest, UpdateCourseRequest, UpdateReservationRequest, UpdateScheduleRequest
 
 class Repository:
     def __init__(self, session: Session = Depends(get_database)):
@@ -43,7 +43,6 @@ class StudentRepository(Repository):
 
 class InstructorRepository(Repository):
 
-
     def get_all_instructors(self) -> List[Instructors]:
         return list(self.session.scalars(select(Instructors)))
     
@@ -71,8 +70,6 @@ class InstructorRepository(Repository):
 
 
 class CoursesRepository(Repository):
-
-
     def get_all_courses(self):
         results = self.session.execute(
             select(Courses, Instructors.name, Instructors.contact, Instructors.email)
@@ -91,6 +88,7 @@ class CoursesRepository(Repository):
         return courses_list
     
     def get_course_by_id(self, id: int) -> Courses | None:
+
         result = self.session.execute(
             select(Courses, Instructors.name, Instructors.contact, Instructors.email)
             .join(Instructors, Instructors.id == Courses.instructor_id)
@@ -137,6 +135,7 @@ class CoursesRepository(Repository):
         self.session.commit()
 
 class ClassroomsRepository(Repository):
+
     def get_all_classrooms(self) -> List[Classrooms]:
         return list(self.session.scalars(select(Classrooms)))
 
@@ -150,7 +149,6 @@ class ClassroomsRepository(Repository):
         return classroom
     
     def update_classroom_by_id(self, id: int, request: UpdateClassroomRequest):
-
         classroom = self.session.execute(select(Classrooms).filter_by(id=id)).scalar_one()
         if classroom:
             classroom.name = request.name
@@ -169,8 +167,80 @@ class ClassroomsRepository(Repository):
         self.session.commit()
 
 class SchedulesRepository(Repository):
-    pass
+    
+    def get_all_schedules(self) -> List[Schedules]:
+        return list(self.session.scalars(select(Schedules)))
+
+
+    def get_schedule_by_id(self, id: int) -> Schedules | None:
+        return self.session.scalar(select(Schedules).where(Schedules.id == id))
+
+
+    def create_schedule(self, schedule: Schedules) -> Schedules:
+
+        self.session.add(instance=schedule)
+        self.session.commit()
+        self.session.refresh(instance=schedule)
+        return schedule
+
+
+    def update_schedule_by_id(self, id: int, request: UpdateScheduleRequest):
+        schedule = self.session.execute(select(Schedules).filter_by(id=id)).scalar_one()
+        if schedule:
+            schedule.course_id = request.course_id
+            schedule.classroom_id = request.classroom_id
+            schedule.start_time = request.start_time
+            schedule.end_time = request.end_time
+            schedule.course_date = request.course_date
+
+            self.session.commit()
+            self.session.refresh(instance=schedule)
+
+        else:
+            raise HTTPException(status_code=404, detail="Schedule Not Found")
+
+
+    def delete_schedule(self, id: int):
+        self.session.execute(delete(Schedules).where(Schedules.id == id))
+        self.session.commit()
+
 
 
 class ReservationRepository(Repository):
-    pass
+
+    def get_all_reservations(self) -> List[Reservations]:
+        return list(self.session.scalars(select(Reservations)))
+
+
+    def get_reservation_by_id(self, id: int) -> Reservations | None:
+        return self.session.scalar(select(Reservations).where(Reservations.id == id))
+
+
+    def create_reservation(self, reservation: Reservations) -> Reservations:
+        self.session.add(instance=reservation)
+        self.session.commit()
+        self.session.refresh(instance=reservation)
+        return reservation
+
+
+    def update_reservation_by_id(self, id: int, request: UpdateReservationRequest):
+        reservation = self.session.execute(select(Reservations).filter_by(id=id)).scalar_one()
+        if reservation:
+            reservation.student_id = request.student_id
+            reservation.course_id = request.course_id
+            reservation.schedule_id = request.schedule_id
+            reservation.reservated_date = request.reservated_date
+            reservation.reservated_time = request.reservated_time
+            reservation.status = request.status
+            reservation.notes = request.notes
+
+            self.session.commit()
+            self.session.refresh(instance=reservation)
+
+        else:
+            raise HTTPException(status_code=404, detail="Reservation Not Found")
+
+
+    def delete_reservation(self, id: int):
+        self.session.execute(delete(Reservations).where(Reservations.id == id))
+        self.session.commit()
