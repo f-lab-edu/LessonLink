@@ -11,14 +11,14 @@ router = APIRouter(prefix="/schedules")
 
 @router.get("/", status_code=200, tags=["Schedules"])
 def get_Schedules_handler(repo: SchedulesRepository = Depends()):
-    return repo.get_all_schedules()
+    return repo.get_all_entities()
 
 @router.get("/{id}", status_code=200, tags=["Schedules"])
 def get_schedule_by_id_handler(
     id: int,
     repo: SchedulesRepository = Depends()
 ):
-    schedule = repo.get_schedule_by_id(id=id)
+    schedule = repo.get_entity_by_id(id=id)
 
     if schedule:
         return schedule
@@ -31,7 +31,7 @@ def post_create_id_handler(
     repo: SchedulesRepository = Depends()
 ) -> ScheduleSchema:
     schedule: Schedules = Schedules.create(request=request)
-    schedule: Schedules = repo.create_schedule(schedule=schedule)
+    schedule: Schedules = repo.create_entity(schedule=schedule)
     return ScheduleSchema.from_orm(schedule)
     
 @router.patch("/{id}", status_code=200, tags=["Schedules"])
@@ -40,10 +40,10 @@ def patch_update_schedule_pw_by_id_handler(
     request: UpdateScheduleRequest,
     repo: SchedulesRepository = Depends()
 ):
-    schedule = repo.get_schedule_by_id(id=id)
+    schedule = repo.get_entity_by_id(id=id)
 
     if schedule:
-        repo.update_schedule_by_id(id=id, request=request)
+        repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Schedule Not Found")
     
@@ -52,9 +52,9 @@ def delete_schedule_handler(
     id: int,
     repo: SchedulesRepository = Depends()
 ):
-    schedule = repo.get_schedule_by_id(id=id)
+    schedule = repo.get_entity_by_id(id=id)
 
     if schedule:
-        repo.delete_schedule(id=id)
+        repo.delete_entity_by_id(id=id)
     else:
         raise HTTPException(status_code=404, detail="Schedule Not Found")

@@ -10,14 +10,14 @@ router = APIRouter(prefix="/instructors")
 
 @router.get("/", status_code=200, tags=["Instructors"])
 def get_instructor_handler(repo: InstructorRepository = Depends()):
-    return repo.get_all_instructors()
+    return repo.get_all_entities()
 
 @router.get("/{id}", status_code=200, tags=["Instructors"])
 def get_instructor_by_id_handler(
     id: str,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(id=id)
+    instructor = repo.get_entity_by_id(id=id)
     
     if id:
         return instructor
@@ -29,7 +29,7 @@ def post_create_instructor_handler(
     repo: InstructorRepository = Depends()
 ):
     instructor: Instructors = Instructors.create(request=request)
-    instructor: Instructors = repo.create_instructor(instructor=instructor)
+    instructor: Instructors = repo.create_entity(instructor=instructor)
     return InstructorSchema.from_orm(instructor)
     
 @router.patch("/{id}", status_code=200, tags=["Instructors"])
@@ -38,11 +38,11 @@ def patch_update_instructor_pw_by_id_handler(
     request: UpdatePasswordRequest,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(id=id)
+    instructor = repo.get_entity_by_id(id=id)
 
     if instructor:
         encrypted_pw = bcrypt.hashpw(request.pw.encode(), salt=bcrypt.gensalt())
-        repo.update_instructor_pw_by_id(id=id, pw=encrypted_pw)
+        repo.update_entity_by_id(id=id, pw=encrypted_pw)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")
     
@@ -51,9 +51,9 @@ def delete_instructor_handler(
     id: str,
     repo: InstructorRepository = Depends()
 ):
-    instructor = repo.get_instructor_by_id(id=id)
+    instructor = repo.get_entity_by_id(id=id)
 
     if instructor:
-        repo.delete_instructor(id=id)
+        repo.delete_entity_by_id(id=id)
     else:
         raise HTTPException(status_code=404, detail="Instructor Not Found")

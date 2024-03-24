@@ -10,14 +10,14 @@ router = APIRouter(prefix="/classrooms")
 
 @router.get("/", status_code=200, tags=["Classrooms"])
 def get_classroom_handler(repo: ClassroomsRepository = Depends()):
-    return repo.get_all_classrooms()
+    return repo.get_all_entities()
 
 @router.get("/{id}", status_code=200, tags=["Classrooms"])
 def get_classroom_by_id_handler(
     id: int,
     repo: ClassroomsRepository = Depends()
 ):
-    classroom = repo.get_classroom_by_id(id=id)
+    classroom = repo.get_entity_by_id(id=id)
 
     if classroom:
         return classroom
@@ -30,7 +30,7 @@ def post_create_classroom_handler(
     repo: ClassroomsRepository = Depends()
 ):
     classroom: Classrooms = Classrooms.create(request=request)
-    classroom: Classrooms = repo.create_classrooms(classroom=classroom)
+    classroom: Classrooms = repo.create_entity(classroom=classroom)
     return ClassroomSchema.from_orm(classroom)
 
 
@@ -40,10 +40,10 @@ def patch_classroom_handler(
     request: UpdateClassroomRequest,
     repo: ClassroomsRepository = Depends()
 ):
-    classroom = repo.get_classroom_by_id(id=id)
+    classroom = repo.get_entity_by_id(id=id)
 
     if classroom:
-        repo.update_classroom_by_id(id=id, request=request)
+        repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Classroom Not Found")
     
@@ -52,9 +52,9 @@ def delete_classroom_handler(
     id: int,
     repo: ClassroomsRepository = Depends()
 ):
-    classroom = repo.get_classroom_by_id(id=id)
+    classroom = repo.get_entity_by_id(id=id)
 
     if classroom:
-        repo.delete_classroom(id=id)
+        repo.delete_entity_by_id(id=id)
     else:
         raise HTTPException(status_code=404, detail="Classroom Not Found")
