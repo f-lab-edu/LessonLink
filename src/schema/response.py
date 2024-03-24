@@ -88,7 +88,7 @@ class ReservationSchema(BaseModel):
     course_id: int
     schedule_id: int
     reservated_date: date
-    reservated_time: datetime
+    reservated_time: time
     status: str
     notes: str = None
 
@@ -97,5 +97,5 @@ class ReservationSchema(BaseModel):
         from_attributes = True
 
 
-class ReservationSchema(BaseModel):
+class ReservationListSchema(BaseModel):
     courses: List[ReservationSchema]

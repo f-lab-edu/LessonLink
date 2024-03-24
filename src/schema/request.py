@@ -76,7 +76,7 @@ class CreateReservationRequest(BaseModel):
     course_id: int
     schedule_id: int
     reservated_date: date
-    reservated_time: datetime
+    reservated_time: time
     status: str
     notes: str = None
 
@@ -85,6 +85,6 @@ class UpdateReservationRequest(BaseModel):
     course_id: int
     schedule_id: int
     reservated_date: date
-    reservated_time: datetime
+    reservated_time: time
     status: str
     notes: str = None
