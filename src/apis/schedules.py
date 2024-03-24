@@ -13,6 +13,7 @@ router = APIRouter(prefix="/schedules")
 def get_Schedules_handler(repo: SchedulesRepository = Depends()):
     return repo.get_all_entities()
 
+
 @router.get("/{id}", status_code=200, tags=["Schedules"])
 def get_schedule_by_id_handler(
     id: int,
@@ -22,8 +23,10 @@ def get_schedule_by_id_handler(
 
     if schedule:
         return schedule
-    
-    raise HTTPException(status_code=404, detail=f"Not found schedule infomation of id = {id}")
+
+    raise HTTPException(
+        status_code=404, detail=f"Not found schedule infomation of id = {id}")
+
 
 @router.post("/", status_code=201, tags=["Schedules"])
 def post_create_id_handler(
@@ -33,7 +36,8 @@ def post_create_id_handler(
     schedule: Schedules = Schedules.create(request=request)
     schedule: Schedules = repo.create_entity(schedule=schedule)
     return ScheduleSchema.from_orm(schedule)
-    
+
+
 @router.patch("/{id}", status_code=200, tags=["Schedules"])
 def patch_update_schedule_pw_by_id_handler(
     id: int,
@@ -46,7 +50,8 @@ def patch_update_schedule_pw_by_id_handler(
         repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Schedule Not Found")
-    
+
+
 @router.delete("/{id}", status_code=204, tags=["Schedules"])
 def delete_schedule_handler(
     id: int,

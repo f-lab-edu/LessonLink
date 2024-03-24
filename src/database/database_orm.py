@@ -1,8 +1,11 @@
 from sqlalchemy import Column, String, Date, Integer, ForeignKey, Time
 from sqlalchemy.orm import declarative_base, relationship
 
-from schema.request import CreateCourseRequest, CreateInstructorRequest, CreateStudentRequest, CreateClassroomRequest, CreateReservationRequest, CreateScheduleRequest
-
+from schema.request import (
+    CreateCourseRequest, CreateInstructorRequest,
+    CreateStudentRequest, CreateClassroomRequest,
+    CreateReservationRequest, CreateScheduleRequest
+)
 import bcrypt
 
 Base = declarative_base()
@@ -35,23 +38,23 @@ class Students(Base):
             f"join_date={self.join_date!r}",
             f")"
         ))
-    
+
     @classmethod
     def create(cls, request: CreateStudentRequest) -> "Students":
 
         encrypted_pw = bcrypt.hashpw(request.pw.encode(), bcrypt.gensalt())
 
         return cls(
-            id = request.id,
-            pw = encrypted_pw.decode(),
-            name = request.name,
-            contact = request.contact,
-            email = request.email,
-            birth_date = request.birth_date,
-            gender = request.gender,
-            join_date = request.join_date
+            id=request.id,
+            pw=encrypted_pw.decode(),
+            name=request.name,
+            contact=request.contact,
+            email=request.email,
+            birth_date=request.birth_date,
+            gender=request.gender,
+            join_date=request.join_date
         )
-    
+
 
 class Instructors(Base):
     __tablename__ = "instructors"
@@ -74,20 +77,20 @@ class Instructors(Base):
             f"email={self.email!r}, ",
             f")"
         ))
-    
+
     @classmethod
     def create(cls, request: CreateInstructorRequest) -> "Instructors":
 
         encrypted_pw = bcrypt.hashpw(request.pw.encode(), bcrypt.gensalt())
 
         return cls(
-            id = request.id,
-            pw = encrypted_pw,
-            name = request.name,
-            contact = request.contact,
-            email = request.email,
+            id=request.id,
+            pw=encrypted_pw,
+            name=request.name,
+            contact=request.contact,
+            email=request.email,
         )
-    
+
 
 class Courses(Base):
     __tablename__ = "courses"
@@ -107,14 +110,14 @@ class Courses(Base):
     def create(cls, request: CreateCourseRequest) -> "Courses":
 
         return cls(
-            id = request.id,
-            name = request.name,
-            description = request.description,
-            start_date = request.start_date,
-            end_date = request.end_date,
-            instructor_id = request.instructor_id
+            id=request.id,
+            name=request.name,
+            description=request.description,
+            start_date=request.start_date,
+            end_date=request.end_date,
+            instructor_id=request.instructor_id
         )
-    
+
 
 class Classrooms(Base):
     __tablename__ = "classrooms"
@@ -131,10 +134,10 @@ class Classrooms(Base):
     def create(cls, request: CreateClassroomRequest) -> "Classrooms":
 
         return cls(
-            name = request.name,
-            capacity = request.capacity,
-            location = request.location,
-            building_name = request.building_name
+            name=request.name,
+            capacity=request.capacity,
+            location=request.location,
+            building_name=request.building_name
         )
 
 
@@ -156,12 +159,13 @@ class Schedules(Base):
     def create(cls, request: CreateScheduleRequest) -> "Schedules":
 
         return cls(
-            course_id = request.course_id,
-            classroom_id = request.classroom_id,
-            start_time = request.start_time,
-            end_time = request.end_time,
-            course_date = request.course_date
+            course_id=request.course_id,
+            classroom_id=request.classroom_id,
+            start_time=request.start_time,
+            end_time=request.end_time,
+            course_date=request.course_date
         )
+
 
 class Reservations(Base):
     __tablename__ = "reservations"
@@ -183,11 +187,11 @@ class Reservations(Base):
     def create(cls, request: CreateReservationRequest) -> "Reservations":
 
         return cls(
-            student_id = request.student_id,
-            course_id = request.course_id,
-            schedule_id = request.schedule_id,
-            reservated_date = request.reservated_date,
-            reservated_time = request.reservated_time,
-            status = request.status,
-            notes = request.notes
+            student_id=request.student_id,
+            course_id=request.course_id,
+            schedule_id=request.schedule_id,
+            reservated_date=request.reservated_date,
+            reservated_time=request.reservated_time,
+            status=request.status,
+            notes=request.notes
         )

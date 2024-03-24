@@ -9,9 +9,11 @@ import bcrypt
 
 router = APIRouter(prefix="/students")
 
+
 @router.get("/", status_code=200, tags=["Students"])
 def get_students_handler(repo: StudentRepository = Depends()):
     return repo.get_all_entities()
+
 
 @router.get("/{id}", status_code=200, tags=["Students"])
 def get_student_by_id_handler(
@@ -19,10 +21,12 @@ def get_student_by_id_handler(
     repo: StudentRepository = Depends()
 ):
     student = repo.get_entity_by_id(id=id)
-    
+
     if student:
         return student
-    raise HTTPException(status_code=404, detail=f"Not found student infomation of id = {id}")
+    raise HTTPException(
+        status_code=404, detail=f"Not found student infomation of id = {id}")
+
 
 @router.post("/", status_code=201, tags=["Students"])
 def post_create_id_handler(
@@ -32,7 +36,8 @@ def post_create_id_handler(
     student: Students = Students.create(request=request)
     student: Students = repo.create_entity(student=student)
     return StudentSchema.from_orm(student)
-    
+
+
 @router.patch("/{id}", status_code=200, tags=["Students"])
 def patch_update_student_pw_by_id_handler(
     id: str,
@@ -42,11 +47,13 @@ def patch_update_student_pw_by_id_handler(
     student = repo.get_entity_by_id(id=id)
 
     if student:
-        encrypted_pw = bcrypt.hashpw(request.pw.encode(), salt=bcrypt.gensalt())
+        encrypted_pw = bcrypt.hashpw(
+            request.pw.encode(), salt=bcrypt.gensalt())
         repo.update_entity_by_id(id=id, pw=encrypted_pw)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")
-    
+
+
 @router.delete("/{id}", status_code=204, tags=["Students"])
 def delete_student_handler(
     id: str,

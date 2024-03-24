@@ -1,5 +1,6 @@
 import bcrypt
 
+
 class StudentFunction:
     encoding: str = "utf-8"
 

@@ -13,6 +13,7 @@ router = APIRouter(prefix="/reservations")
 def get_Reservations_handler(repo: ReservationRepository = Depends()):
     return repo.get_all_entities()
 
+
 @router.get("/{id}", status_code=200, tags=["Reservations"])
 def get_reservation_by_id_handler(
     id: int,
@@ -22,8 +23,10 @@ def get_reservation_by_id_handler(
 
     if reservation:
         return reservation
-    
-    raise HTTPException(status_code=404, detail=f"Not found reservation infomation of id = {id}")
+
+    raise HTTPException(
+        status_code=404, detail=f"Not found reservation infomation of id = {id}")
+
 
 @router.post("/", status_code=201, tags=["Reservations"])
 def post_create_id_handler(
@@ -33,7 +36,8 @@ def post_create_id_handler(
     reservation: Reservations = Reservations.create(request=request)
     reservation: Reservations = repo.create_entity(reservation=reservation)
     return ReservationSchema.from_orm(reservation)
-    
+
+
 @router.patch("/{id}", status_code=200, tags=["Reservations"])
 def patch_update_reservation_pw_by_id_handler(
     id: int,
@@ -46,7 +50,8 @@ def patch_update_reservation_pw_by_id_handler(
         repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Reservation Not Found")
-    
+
+
 @router.delete("/{id}", status_code=204, tags=["Reservations"])
 def delete_reservation_handler(
     id: int,

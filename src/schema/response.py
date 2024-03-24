@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from datetime import date, datetime, time
+from datetime import date, time
 from typing import List
+
 
 class StudentSchema(BaseModel):
     id: str
@@ -49,6 +50,7 @@ class CourseSchema(BaseModel):
         orm_mode = True
         from_attributes = True
 
+
 class CourseListSchema(BaseModel):
     courses: List[CourseSchema]
 
@@ -78,6 +80,7 @@ class ScheduleSchema(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
 
 class ScheduleListSchema(BaseModel):
     courses: List[ScheduleSchema]

@@ -2,7 +2,6 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Generic
-from abc import ABC, abstractmethod
 
 from database.database import get_database
 

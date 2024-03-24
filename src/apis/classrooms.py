@@ -8,9 +8,11 @@ from schema.response import ClassroomSchema
 
 router = APIRouter(prefix="/classrooms")
 
+
 @router.get("/", status_code=200, tags=["Classrooms"])
 def get_classroom_handler(repo: ClassroomsRepository = Depends()):
     return repo.get_all_entities()
+
 
 @router.get("/{id}", status_code=200, tags=["Classrooms"])
 def get_classroom_by_id_handler(
@@ -21,8 +23,10 @@ def get_classroom_by_id_handler(
 
     if classroom:
         return classroom
-    
-    raise HTTPException(status_code=404, detail=f"Not found classroom infomation of id = {id}")
+
+    raise HTTPException(
+        status_code=404, detail=f"Not found classroom infomation of id = {id}")
+
 
 @router.post("/", status_code=201, tags=["Classrooms"])
 def post_create_classroom_handler(
@@ -46,7 +50,8 @@ def patch_classroom_handler(
         repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Classroom Not Found")
-    
+
+
 @router.delete("/{id}", status_code=204, tags=["Classrooms"])
 def delete_classroom_handler(
     id: int,
