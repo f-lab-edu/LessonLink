@@ -16,4 +16,6 @@ app.include_router(reservations.router)
 
 @app.get("/")
 def root_handler():
+    with open('env.ini', 'r') as file:
+        print(file.read().split('=')[1])
     return {"Hello": "World!"}

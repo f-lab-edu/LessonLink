@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from database.database_orm import Students
-from schema.request import CreateStudentRequest, UpdatePasswordRequest
 from database.database_repo import StudentRepository
-from schema.response import StudentSchema
+
+from schema.request import CreateStudentRequest, LogInRequest, UpdatePasswordRequest
+from schema.response import JWTResponse, StudentSchema
+
+from functions.student import StudentFunction
 
 import bcrypt
 
@@ -42,13 +45,13 @@ def post_create_id_handler(
 def patch_update_student_pw_by_id_handler(
     id: str,
     request: UpdatePasswordRequest,
-    repo: StudentRepository = Depends()
+    repo: StudentRepository = Depends(),
+    student_func: StudentFunction = Depends()
 ):
     student = repo.get_entity_by_id(id=id)
 
     if student:
-        encrypted_pw = bcrypt.hashpw(
-            request.pw.encode(), salt=bcrypt.gensalt())
+        encrypted_pw = student_func.encrypt_pw(request.pw)
         repo.update_entity_by_id(id=id, pw=encrypted_pw)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")
@@ -65,3 +68,23 @@ def delete_student_handler(
         repo.delete_entity_by_id(id=id)
     else:
         raise HTTPException(status_code=404, detail="Student Not Found")
+
+
+@router.post("/log-in", tags=["Students"])
+def post_student_login_handler(
+    request: LogInRequest,
+    repo: StudentRepository = Depends(),
+    student_func: StudentFunction = Depends()
+):
+    student = repo.get_entity_by_id(id=request.id)
+
+    if not student:
+        raise HTTPException(status_code=404, detail="Student Not Found")
+
+    verified: bool = student_func.verify_pw(request.pw, student.pw)
+
+    if not verified:
+        raise HTTPException(status_code=401, detail="Password is incorrect.")
+
+    access_token = student_func.create_jwt(student.id)
+    return JWTResponse(access_token=access_token)

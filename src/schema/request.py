@@ -40,7 +40,7 @@ class UpdateCourseRequest(BaseModel):
     start_date: date = None
     end_date: date = None
     instructor_id: str = None
-    
+
 
 class CreateClassroomRequest(BaseModel):
     name: str
@@ -90,3 +90,8 @@ class UpdateReservationRequest(BaseModel):
     reservated_time: time
     status: str
     notes: str = None
+
+
+class LogInRequest(BaseModel):
+    id: str
+    pw: str = None

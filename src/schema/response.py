@@ -102,3 +102,7 @@ class ReservationSchema(BaseModel):
 
 class ReservationListSchema(BaseModel):
     courses: List[ReservationSchema]
+
+
+class JWTResponse(BaseModel):
+    access_token: str
