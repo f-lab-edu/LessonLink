@@ -25,7 +25,8 @@ class StudentFunction(UserFunction):
         return jwt.encode(
             {
                 "sub": id,
-                "exp": datetime.now() + timedelta(days=1)
+                "exp": datetime.now() + timedelta(days=1),
+                "role": "student"
             },
             self.secret_key,
             algorithm=self.jwt_algorithm
@@ -36,4 +37,4 @@ class StudentFunction(UserFunction):
             access_token, self.secret_key, algorithms=[self.jwt_algorithm]
         )
 
-        return payload["sub"]
+        return payload
