@@ -60,4 +60,4 @@ def delete_student_handler(
     if course:
         repo.delete_entity_by_id(id=id)
     else:
-        raise HTTPException(status_code=404, detail="Student Not Found")
+        raise HTTPException(status_code=404, detail="Course Not Found")
