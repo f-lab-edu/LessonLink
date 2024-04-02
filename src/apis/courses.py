@@ -4,18 +4,27 @@ from database.database_repo import CoursesRepository
 from schema.request import CreateCourseRequest, UpdateCourseRequest
 from schema.response import CourseSchema
 from database.database_orm import Courses
+from functions.security import get_access_token
+from functions.student import StudentFunction
+from functions.instructor import InstructorFunction
 
 router = APIRouter(prefix="/courses")
 
 
 @router.get("/", status_code=200, tags=["Courses"])
-def get_courses_handler(repo: CoursesRepository = Depends()):
+def get_courses_handler(
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
+    repo: CoursesRepository = Depends()
+):
     return repo.get_all_entities()
 
 
 @router.get("/{id}", status_code=200, tags=["Courses"])
 def get_course_by_id_handler(
     id: int,
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
     course = repo.get_entity_by_id(id=id)
@@ -29,8 +38,18 @@ def get_course_by_id_handler(
 @router.post("/", status_code=201, tags=["Courses"])
 def post_create_course_handler(
     request: CreateCourseRequest,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
 ) -> CourseSchema:
+
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't add course.")
+
     course: Courses = Courses.create(request=request)
     course: Courses = repo.create_entity(course=course)
     return CourseSchema.from_orm(course)
@@ -40,8 +59,17 @@ def post_create_course_handler(
 def patch_course_handler(
     id: int,
     request: UpdateCourseRequest,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't edit course.")
+
     course = repo.get_entity_by_id(id=id)
 
     if course:
@@ -53,8 +81,17 @@ def patch_course_handler(
 @router.delete("/{id}", status_code=204, tags=["Courses"])
 def delete_student_handler(
     id: int,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't delete course.")
+
     course = repo.get_entity_by_id(id=id)
 
     if course:

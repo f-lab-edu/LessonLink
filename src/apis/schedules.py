@@ -4,19 +4,28 @@ from database.database_repo import SchedulesRepository
 from schema.request import CreateScheduleRequest, UpdateScheduleRequest
 from schema.response import ScheduleSchema
 from database.database_orm import Schedules
+from functions.security import get_access_token
+from functions.student import StudentFunction
+from functions.instructor import InstructorFunction
 
 
 router = APIRouter(prefix="/schedules")
 
 
 @router.get("/", status_code=200, tags=["Schedules"])
-def get_Schedules_handler(repo: SchedulesRepository = Depends()):
+def get_Schedules_handler(
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
+    repo: SchedulesRepository = Depends()
+):
     return repo.get_all_entities()
 
 
 @router.get("/{id}", status_code=200, tags=["Schedules"])
 def get_schedule_by_id_handler(
     id: int,
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
     repo: SchedulesRepository = Depends()
 ):
     schedule = repo.get_entity_by_id(id=id)
@@ -31,8 +40,18 @@ def get_schedule_by_id_handler(
 @router.post("/", status_code=201, tags=["Schedules"])
 def post_create_id_handler(
     request: CreateScheduleRequest,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: SchedulesRepository = Depends()
 ) -> ScheduleSchema:
+
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't add schedule.")
+
     schedule: Schedules = Schedules.create(request=request)
     schedule: Schedules = repo.create_entity(schedule=schedule)
     return ScheduleSchema.from_orm(schedule)
@@ -42,8 +61,18 @@ def post_create_id_handler(
 def patch_update_schedule_pw_by_id_handler(
     id: int,
     request: UpdateScheduleRequest,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: SchedulesRepository = Depends()
 ):
+
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't edit schedule.")
+
     schedule = repo.get_entity_by_id(id=id)
 
     if schedule:
@@ -55,8 +84,18 @@ def patch_update_schedule_pw_by_id_handler(
 @router.delete("/{id}", status_code=204, tags=["Schedules"])
 def delete_schedule_handler(
     id: int,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: SchedulesRepository = Depends()
 ):
+
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+
+    if role == 'student':
+        raise HTTPException(
+            status_code=401, detail=f"Student can't delete schedule.")
+
     schedule = repo.get_entity_by_id(id=id)
 
     if schedule:
