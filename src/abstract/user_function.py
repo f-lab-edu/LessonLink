@@ -19,22 +19,18 @@ class UserFunction(ABC):
 
     @abstractmethod
     def encrypt_pw(self, plain_pw: str) -> str:
-        """Encrypts the plain password."""
         pass
 
     @abstractmethod
     def verify_pw(self, plain_pw, hashed_pw) -> bool:
-        """Verifies the password against the hashed version."""
         pass
 
     @abstractmethod
     def create_jwt(self, id: str) -> str:
-        """Creates a JWT for the given id."""
         pass
 
     @abstractmethod
     def decode_jwt(self, access_token: str) -> str:
-        """Decodes the JWT and returns the subject."""
         pass
 
     # Implement any other methods that should be shared/required by all subclasses.
