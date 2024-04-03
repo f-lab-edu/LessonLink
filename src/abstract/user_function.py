@@ -32,5 +32,3 @@ class UserFunction(ABC):
     @abstractmethod
     def decode_jwt(self, access_token: str) -> str:
         pass
-
-    # Implement any other methods that should be shared/required by all subclasses.
