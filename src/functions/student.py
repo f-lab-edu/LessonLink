@@ -22,11 +22,15 @@ class StudentFunction(UserFunction):
         )
 
     def create_jwt(self, id: str):
+        if id == 'admin':
+            role = "admin"
+        else:
+            role = "student"
         return jwt.encode(
             {
                 "sub": id,
                 "exp": datetime.now() + timedelta(days=1),
-                "role": "student"
+                "role": role
             },
             self.secret_key,
             algorithm=self.jwt_algorithm
