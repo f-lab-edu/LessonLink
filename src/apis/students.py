@@ -7,22 +7,40 @@ from schema.request import CreateStudentRequest, LogInRequest, UpdatePasswordReq
 from schema.response import JWTResponse, StudentSchema
 
 from functions.student import StudentFunction
-
-import bcrypt
+from functions.security import get_access_token
 
 router = APIRouter(prefix="/students")
 
 
 @router.get("/", status_code=200, tags=["Students"])
-def get_students_handler(repo: StudentRepository = Depends()):
+def get_students_handler(
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
+    repo: StudentRepository = Depends()
+):
+    payload = student_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    if not (role == 'admin'):
+        raise HTTPException(
+            status_code=401, detail=f"Admin only allowed.")
+
     return repo.get_all_entities()
 
 
 @router.get("/{id}", status_code=200, tags=["Students"])
 def get_student_by_id_handler(
     id: str,
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
     repo: StudentRepository = Depends()
 ):
+    payload = student_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     student = repo.get_entity_by_id(id=id)
 
     if student:
@@ -46,8 +64,16 @@ def patch_update_student_pw_by_id_handler(
     id: str,
     request: UpdatePasswordRequest,
     repo: StudentRepository = Depends(),
+    access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends()
 ):
+    payload = student_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     student = repo.get_entity_by_id(id=id)
 
     if student:
@@ -60,8 +86,17 @@ def patch_update_student_pw_by_id_handler(
 @router.delete("/{id}", status_code=204, tags=["Students"])
 def delete_student_handler(
     id: str,
+    access_token: str = Depends(get_access_token),
+    student_func: StudentFunction = Depends(),
     repo: StudentRepository = Depends()
 ):
+    payload = student_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     student = repo.get_entity_by_id(id=id)
 
     if student:

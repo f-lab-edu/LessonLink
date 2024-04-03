@@ -1,25 +1,46 @@
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest, LogInRequest, UpdatePasswordRequest
 from database.database_repo import InstructorRepository
 from schema.response import InstructorSchema, JWTResponse
 from functions.instructor import InstructorFunction
+from functions.security import get_access_token
 
 router = APIRouter(prefix="/instructors")
 
 
 @router.get("/", status_code=200, tags=["Instructors"])
-def get_instructor_handler(repo: InstructorRepository = Depends()):
+def get_instructor_handler(
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
+    repo: InstructorRepository = Depends()
+):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    if not (role == 'admin'):
+        raise HTTPException(
+            status_code=401, detail=f"Admin only allowed.")
+
     return repo.get_all_entities()
 
 
 @router.get("/{id}", status_code=200, tags=["Instructors"])
 def get_instructor_by_id_handler(
     id: str,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     instructor = repo.get_entity_by_id(id=id)
 
     if id:
@@ -42,8 +63,17 @@ def post_create_instructor_handler(
 def patch_update_instructor_pw_by_id_handler(
     id: str,
     request: UpdatePasswordRequest,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     instructor = repo.get_entity_by_id(id=id)
 
     if instructor:
@@ -57,8 +87,17 @@ def patch_update_instructor_pw_by_id_handler(
 @router.delete("/{id}", status_code=204, tags=["Instructors"])
 def delete_instructor_handler(
     id: str,
+    access_token: str = Depends(get_access_token),
+    instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
+    payload = instructor_func.decode_jwt(access_token=access_token)
+    role = payload['role']
+    sub = payload['sub']
+    if not (role == 'admin' or sub == id):
+        raise HTTPException(
+            status_code=401, detail=f"Not allowed.")
+
     instructor = repo.get_entity_by_id(id=id)
 
     if instructor:
