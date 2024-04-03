@@ -28,7 +28,7 @@ class Repository(ABC, Generic[EducationalEntity]):
         pass
 
     @abstractmethod
-    def update_entity_by_id(self, id: T, request) -> EducationalEntity:
+    def update_entity_by_id(self, id: T, request: Request) -> EducationalEntity:
         pass
 
     @abstractmethod
