@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest, LogInRequest, UpdatePasswordRequest
-from database.database_repo import InstructorRepository
+from database.InstructorRepository import InstructorRepository
 from schema.response import InstructorSchema, JWTResponse
 from functions.instructor import InstructorFunction
 from functions.security import get_access_token

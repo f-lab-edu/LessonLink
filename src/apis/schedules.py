@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from database.database_repo import SchedulesRepository
+from database.SchedulesRepository import SchedulesRepository
 from schema.request import CreateScheduleRequest, UpdateScheduleRequest
 from schema.response import ScheduleSchema
 from database.database_orm import Schedules

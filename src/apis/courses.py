@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from database.database_repo import CoursesRepository
+from database.CoursesRepository import CoursesRepository
 from schema.request import CreateCourseRequest, UpdateCourseRequest
 from schema.response import CourseSchema
 from database.database_orm import Courses

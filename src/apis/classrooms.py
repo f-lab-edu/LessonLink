@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from database.database_repo import ClassroomsRepository
+from database.ClassroomsRepository import ClassroomsRepository
 from schema.request import CreateClassroomRequest, UpdateClassroomRequest
 from database.database_orm import Classrooms
 from schema.response import ClassroomSchema
