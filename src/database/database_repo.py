@@ -32,14 +32,14 @@ class StudentRepository(Repository):
         except IntegrityError:
             raise HTTPException(status_code=409, detail="ID already exists.")
 
-    def update_entity_by_id(self, id: str, pw: str):
+    def update_entity_by_id(self, id: str, pw: str) -> None:
         student = self.session.execute(select(Students)
                                        .filter_by(id=id)).scalar_one()
         student.pw = pw
         self.session.commit()
         self.session.refresh(student)
 
-    def delete_entity_by_id(self, id: str):
+    def delete_entity_by_id(self, id: str) -> None:
         self.session.execute(delete(Students)
                              .where(Students.id == id))
         self.session.commit()
@@ -63,14 +63,14 @@ class InstructorRepository(Repository):
         except IntegrityError as e:
             raise HTTPException(status_code=409, detail="ID already exist.")
 
-    def update_entity_by_id(self, id: str, pw: str):
+    def update_entity_by_id(self, id: str, pw: str) -> None:
         instructor = self.session.execute(select(Instructors)
                                           .filter_by(id=id)).scalar_one()
         instructor.pw = pw
         self.session.commit()
         self.session.refresh(instance=instructor)
 
-    def delete_entity_by_id(self, id: str):
+    def delete_entity_by_id(self, id: str) -> None:
         self.session.execute(delete(Instructors).where(Instructors.id == id))
         self.session.commit()
 
@@ -121,7 +121,7 @@ class CoursesRepository(Repository):
         except IntegrityError as e:
             raise HTTPException(status_code=409, detail="ID already exist.")
 
-    def update_entity_by_id(self, id: int, request: UpdateCourseRequest):
+    def update_entity_by_id(self, id: int, request: UpdateCourseRequest) -> None:
 
         course = self.session.execute(
             select(Courses).filter_by(id=id)).scalar_one()
@@ -138,7 +138,7 @@ class CoursesRepository(Repository):
         else:
             raise HTTPException(status_code=404, detail="Course Not Found")
 
-    def delete_entity_by_id(self, id: int):
+    def delete_entity_by_id(self, id: int) -> None:
         self.session.execute(delete(Courses).where(Courses.id == id))
         self.session.commit()
 
@@ -157,7 +157,8 @@ class ClassroomsRepository(Repository):
         self.session.refresh(instance=classroom)
         return classroom
 
-    def update_entity_by_id(self, id: int, request: UpdateClassroomRequest):
+    def update_entity_by_id(self, id: int, request: UpdateClassroomRequest) -> None:
+
         classroom = self.session.execute(
             select(Classrooms).filter_by(id=id)).scalar_one()
         if classroom:
@@ -172,7 +173,7 @@ class ClassroomsRepository(Repository):
         else:
             raise HTTPException(status_code=404, detail="Classroom Not Found")
 
-    def delete_entity_by_id(self, id: int):
+    def delete_entity_by_id(self, id: int) -> None:
         self.session.execute(delete(Classrooms).where(Classrooms.id == id))
         self.session.commit()
 
@@ -192,7 +193,7 @@ class SchedulesRepository(Repository):
         self.session.refresh(instance=schedule)
         return schedule
 
-    def update_entity_by_id(self, id: int, request: UpdateScheduleRequest):
+    def update_entity_by_id(self, id: int, request: UpdateScheduleRequest) -> None:
         schedule = self.session.execute(
             select(Schedules).filter_by(id=id)).scalar_one()
         if schedule:
@@ -208,7 +209,7 @@ class SchedulesRepository(Repository):
         else:
             raise HTTPException(status_code=404, detail="Schedule Not Found")
 
-    def delete_entity_by_id(self, id: int):
+    def delete_entity_by_id(self, id: int) -> None:
         self.session.execute(delete(Schedules).where(Schedules.id == id))
         self.session.commit()
 
@@ -227,7 +228,7 @@ class ReservationRepository(Repository):
         self.session.refresh(instance=reservation)
         return reservation
 
-    def update_entity_by_id(self, id: int, request: UpdateReservationRequest):
+    def update_entity_by_id(self, id: int, request: UpdateReservationRequest) -> None:
         reservation = self.session.execute(
             select(Reservations).filter_by(id=id)).scalar_one()
         if reservation:
@@ -246,6 +247,6 @@ class ReservationRepository(Repository):
             raise HTTPException(
                 status_code=404, detail="Reservation Not Found")
 
-    def delete_entity_by_id(self, id: int):
+    def delete_entity_by_id(self, id: int) -> None:
         self.session.execute(delete(Reservations).where(Reservations.id == id))
         self.session.commit()
