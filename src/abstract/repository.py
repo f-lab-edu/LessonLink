@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Generic
 
-from database.database import get_database
+from database.database_init import get_database
 
 EducationalEntity = TypeVar('EducationalEntity')
 Request = TypeVar('Request')
