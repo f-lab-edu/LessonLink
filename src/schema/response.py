@@ -30,7 +30,6 @@ class InstructorSchema(BaseModel):
     email: str = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 
@@ -62,7 +61,6 @@ class ClassroomSchema(BaseModel):
     building_name: str = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 
@@ -78,7 +76,6 @@ class ScheduleSchema(BaseModel):
     course_date: date = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 
@@ -96,7 +93,6 @@ class ReservationSchema(BaseModel):
     notes: str = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 
