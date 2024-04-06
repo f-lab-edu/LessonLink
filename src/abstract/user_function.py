@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-import configparser
-import os
+from functions.init_file import get_init_config_data
 
 
 class UserFunction(ABC):
@@ -8,14 +7,7 @@ class UserFunction(ABC):
     jwt_algorithm = "HS256"
 
     def __init__(self):
-        config = configparser.ConfigParser()
-
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        config_path = os.path.join(current_dir, '..', 'env.ini')
-
-        config.read(config_path)
-
-        self.secret_key = config.get('secret_key', 'SECRET_KEY')
+        self.secret_key = get_init_config_data('secret_key', 'SECRET_KEY')
 
     @abstractmethod
     def encrypt_pw(self, plain_pw: str) -> str:
