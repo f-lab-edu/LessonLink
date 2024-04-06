@@ -23,14 +23,15 @@ def test_get_student_by_id_handler():
         "Authorization": f"Bearer {access_token}"
     }
 
-    print(access_token)
-
     id = get_init_config_data('test_account', 'STUDENT_ID')
     response = client.get(f"/students/{id}", headers=headers)
     assert response.status_code == 200
 
     id2 = get_init_config_data('test_account', 'STUDENT2_ID')
     response = client.get(f"/students/{id2}", headers=headers)
+    assert response.status_code == 401
+
+    response = client.get(f"/students/", headers=headers)
     assert response.status_code == 401
 
 
