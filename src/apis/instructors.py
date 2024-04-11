@@ -17,8 +17,9 @@ def get_instructor_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
+
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
     if not (role == 'admin'):
         raise HTTPException(
             status_code=401, detail=f"Admin only allowed.")
@@ -33,14 +34,15 @@ def get_instructor_by_id_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    instructor = repo.get_entity_by_id(id=id)
+    instructor: Instructors | None = repo.get_entity_by_id(id=id)
 
     if instructor:
         return instructor
@@ -54,9 +56,10 @@ def post_create_instructor_handler(
     request: CreateInstructorRequest,
     repo: InstructorRepository = Depends()
 ):
+
     instructor: Instructors = Instructors.create(request=request)
     instructor: Instructors = repo.create_entity(instructor=instructor)
-    return InstructorSchema.from_orm(instructor)
+    return InstructorSchema.model_validate(instructor)
 
 
 @router.patch("/{id}", status_code=200, tags=["Instructors"])
@@ -67,14 +70,15 @@ def patch_update_instructor_pw_by_id_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    instructor = repo.get_entity_by_id(id=id)
+    instructor: Instructors | None = repo.get_entity_by_id(id=id)
 
     if instructor:
         encrypted_pw = bcrypt.hashpw(
@@ -91,14 +95,14 @@ def delete_instructor_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: InstructorRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    instructor = repo.get_entity_by_id(id=id)
+    instructor: Instructors | None = repo.get_entity_by_id(id=id)
 
     if instructor:
         repo.delete_entity_by_id(id=id)
@@ -112,7 +116,7 @@ def post_student_login_handler(
     repo: InstructorRepository = Depends(),
     instructor_func: InstructorFunction = Depends()
 ):
-    instructor = repo.get_entity_by_id(id=request.id)
+    instructor: Instructors | None = repo.get_entity_by_id(id=request.id)
 
     if not instructor:
         raise HTTPException(status_code=404, detail="Instructor Not Found")
@@ -122,5 +126,5 @@ def post_student_login_handler(
     if not verified:
         raise HTTPException(status_code=401, detail="Password is incorrect.")
 
-    access_token = instructor_func.create_jwt(instructor.id)
+    access_token: str = instructor_func.create_jwt(instructor.id)
     return JWTResponse(access_token=access_token)

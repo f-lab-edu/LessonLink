@@ -18,8 +18,9 @@ def get_students_handler(
     student_func: StudentFunction = Depends(),
     repo: StudentRepository = Depends()
 ):
-    payload = student_func.decode_jwt(access_token=access_token)
-    role = payload['role']
+
+    payload: dict = student_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
     if not (role == 'admin'):
         raise HTTPException(
             status_code=401, detail=f"Admin only allowed.")
@@ -34,14 +35,15 @@ def get_student_by_id_handler(
     student_func: StudentFunction = Depends(),
     repo: StudentRepository = Depends()
 ):
-    payload = student_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+
+    payload: dict = student_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    student = repo.get_entity_by_id(id=id)
+    student: Students | None = repo.get_entity_by_id(id=id)
 
     if student:
         return student
@@ -54,9 +56,10 @@ def post_create_id_handler(
     request: CreateStudentRequest,
     repo: StudentRepository = Depends()
 ) -> StudentSchema:
+
     student: Students = Students.create(request=request)
     student: Students = repo.create_entity(student=student)
-    return StudentSchema.from_orm(student)
+    return StudentSchema.model_validate(student)
 
 
 @router.patch("/{id}", status_code=200, tags=["Students"])
@@ -67,14 +70,15 @@ def patch_update_student_pw_by_id_handler(
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends()
 ):
-    payload = student_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+
+    payload: dict = student_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    student = repo.get_entity_by_id(id=id)
+    student: Students | None = repo.get_entity_by_id(id=id)
 
     if student:
         encrypted_pw = student_func.encrypt_pw(request.pw)
@@ -90,14 +94,15 @@ def delete_student_handler(
     student_func: StudentFunction = Depends(),
     repo: StudentRepository = Depends()
 ):
-    payload = student_func.decode_jwt(access_token=access_token)
-    role = payload['role']
-    sub = payload['sub']
+
+    payload: dict = student_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
+    sub: str = payload['sub']
     if not (role == 'admin' or sub == id):
         raise HTTPException(
             status_code=401, detail=f"Not allowed.")
 
-    student = repo.get_entity_by_id(id=id)
+    student: Students | None = repo.get_entity_by_id(id=id)
 
     if student:
         repo.delete_entity_by_id(id=id)
@@ -111,7 +116,8 @@ def post_student_login_handler(
     repo: StudentRepository = Depends(),
     student_func: StudentFunction = Depends()
 ):
-    student = repo.get_entity_by_id(id=request.id)
+
+    student: Students | None = repo.get_entity_by_id(id=request.id)
 
     if not student:
         raise HTTPException(status_code=404, detail="Student Not Found")
@@ -121,5 +127,5 @@ def post_student_login_handler(
     if not verified:
         raise HTTPException(status_code=401, detail="Password is incorrect.")
 
-    access_token = student_func.create_jwt(student.id)
+    access_token: str = student_func.create_jwt(student.id)
     return JWTResponse(access_token=access_token)
