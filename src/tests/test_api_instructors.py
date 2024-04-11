@@ -5,7 +5,8 @@ from tests.test_login import test_post_instructor_login_handler, test_post_stude
 def test_get_instructor_handler(client, admin_credentials, login):
 
     access_token = test_post_student_login_handler_admin(
-        admin_credentials, login)
+        admin_credentials, login
+    )
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -16,7 +17,8 @@ def test_get_instructor_handler(client, admin_credentials, login):
 
 def test_get_instructor_by_id_handler(client, instructor_credentials, login):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login)
+        instructor_credentials, login
+    )
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -64,7 +66,9 @@ def test_post_instructor3_login_handler(instructor3_credentials, login):
     return access_token
 
 
-def test_patch_update_instructor_pw_by_id_handler(client, instructor3_credentials, login):
+def test_patch_update_instructor_pw_by_id_handler(
+    client, instructor3_credentials, login
+):
 
     access_token = test_post_instructor3_login_handler(
         instructor3_credentials, login)
@@ -86,13 +90,17 @@ def test_patch_update_instructor_pw_by_id_handler(client, instructor3_credential
     assert response.status_code == 200
 
 
-def test_post_instructor3_patched_login_handler(instructor3_patched_credentials, login):
+def test_post_instructor3_patched_login_handler(
+    instructor3_patched_credentials, login
+):
     id, pw = instructor3_patched_credentials
     access_token = login("/instructors/log-in", id, pw)
     return access_token
 
 
-def test_delete_instructor_handler(client, instructor3_patched_credentials, login):
+def test_delete_instructor_handler(
+    client, instructor3_patched_credentials, login
+):
 
     access_token = test_post_instructor3_patched_login_handler(
         instructor3_patched_credentials, login)
