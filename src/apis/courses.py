@@ -27,7 +27,7 @@ def get_course_by_id_handler(
     student_func: StudentFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
-    course = repo.get_entity_by_id(id=id)
+    course: Courses | None = repo.get_entity_by_id(id=id)
 
     if course:
         return course
@@ -43,8 +43,8 @@ def post_create_course_handler(
     repo: CoursesRepository = Depends()
 ) -> CourseSchema:
 
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
 
     if role == 'student':
         raise HTTPException(
@@ -52,7 +52,7 @@ def post_create_course_handler(
 
     course: Courses = Courses.create(request=request)
     course: Courses = repo.create_entity(course=course)
-    return CourseSchema.from_orm(course)
+    return CourseSchema.model_validate(course)
 
 
 @router.patch("/{id}", status_code=200, tags=["Courses"])
@@ -63,14 +63,14 @@ def patch_course_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
 
     if role == 'student':
         raise HTTPException(
             status_code=401, detail=f"Student can't edit course.")
 
-    course = repo.get_entity_by_id(id=id)
+    course: Courses | None = repo.get_entity_by_id(id=id)
 
     if course:
         repo.update_entity_by_id(id=id, request=request)
@@ -85,14 +85,14 @@ def delete_course_handler(
     instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
-    payload = instructor_func.decode_jwt(access_token=access_token)
-    role = payload['role']
+    payload: dict = instructor_func.decode_jwt(access_token=access_token)
+    role: str = payload['role']
 
     if role == 'student':
         raise HTTPException(
             status_code=401, detail=f"Student can't delete course.")
 
-    course = repo.get_entity_by_id(id=id)
+    course: Courses | None = repo.get_entity_by_id(id=id)
 
     if course:
         repo.delete_entity_by_id(id=id)
