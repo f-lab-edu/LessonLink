@@ -1,6 +1,5 @@
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest, LogInRequest, UpdatePasswordRequest
@@ -43,10 +42,11 @@ def get_instructor_by_id_handler(
 
     instructor = repo.get_entity_by_id(id=id)
 
-    if id:
+    if instructor:
         return instructor
-    raise HTTPException(
-        status_code=404, detail=f"Not found instructor infomation of id = {id}")
+    else:
+        raise HTTPException(
+            status_code=404, detail=f"Not found instructor infomation of id = {id}")
 
 
 @router.post("/", status_code=201, tags=["Instructors"])
