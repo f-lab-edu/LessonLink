@@ -79,7 +79,7 @@ def patch_course_handler(
 
 
 @router.delete("/{id}", status_code=204, tags=["Courses"])
-def delete_student_handler(
+def delete_course_handler(
     id: int,
     access_token: str = Depends(get_access_token),
     instructor_func: InstructorFunction = Depends(),
