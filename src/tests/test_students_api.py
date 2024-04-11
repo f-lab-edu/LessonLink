@@ -1,9 +1,14 @@
 from functions.init_file import get_init_config_data
+from tests.conftest import login
 from tests.test_login import test_post_student_login_handler, test_post_student_login_handler_admin
 
 
-def test_get_students_handler(client):
-    access_token = test_post_student_login_handler_admin(client)
+def test_get_students_handler(client, admin_credentials, login):
+
+    id, pw = admin_credentials
+
+    access_token = test_post_student_login_handler_admin(
+        admin_credentials, login)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -12,8 +17,9 @@ def test_get_students_handler(client):
     assert response.status_code == 200
 
 
-def test_get_student_by_id_handler(client):
-    access_token = test_post_student_login_handler(client)
+def test_get_student_by_id_handler(client, student_credentials, login):
+    access_token = test_post_student_login_handler(
+        student_credentials, login)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -61,25 +67,16 @@ def test_post_create_id_handler(client):
     assert response.status_code == 409
 
 
-def test_post_student3_login_handler(client):
-    id = get_init_config_data('test_account', 'STUDENT3_ID')
-    pw = get_init_config_data('test_account', 'STUDENT3_PW')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/students/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_student3_login_handler(student3_credentials, login):
+    id, pw = student3_credentials
+    access_token = login("/students/log-in", id, pw)
     return access_token
 
 
-def test_patch_update_student_pw_by_id_handler(client):
+def test_patch_update_student_pw_by_id_handler(client, student3_credentials, login):
 
-    access_token = test_post_student3_login_handler(client)
+    access_token = test_post_student3_login_handler(
+        student3_credentials, login)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -97,25 +94,16 @@ def test_patch_update_student_pw_by_id_handler(client):
     assert response.status_code == 200
 
 
-def test_post_student3_patched_login_handler(client):
-    id = get_init_config_data('test_account', 'STUDENT3_ID')
-    pw = get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/students/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_student3_patched_login_handler(student3_patched_credentials, login):
+    id, pw = student3_patched_credentials
+    access_token = login("/students/log-in", id, pw)
     return access_token
 
 
-def test_delete_student_handler(client):
+def test_delete_student_handler(client, student3_patched_credentials, login):
 
-    access_token = test_post_student3_patched_login_handler(client)
+    access_token = test_post_student3_patched_login_handler(
+        student3_patched_credentials, login)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }

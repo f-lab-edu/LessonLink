@@ -1,81 +1,28 @@
-from functions.init_file import get_init_config_data
-
-
-def test_post_student_login_handler_admin(client):
-    admin_id = get_init_config_data('admin_account', 'ID')
-    admin_pw = get_init_config_data('admin_account', 'PW')
-
-    login_data = {
-        "id": admin_id,
-        "pw": admin_pw
-    }
-
-    response = client.post("/students/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_student_login_handler_admin(admin_credentials, login):
+    id, pw = admin_credentials
+    access_token = login("/students/log-in", id, pw)
     return access_token
 
 
-def test_post_student_login_handler(client):
-    id = get_init_config_data('test_account', 'STUDENT_ID')
-    pw = get_init_config_data('test_account', 'STUDENT_PW')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/students/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_student_login_handler(student_credentials, login):
+    id, pw = student_credentials
+    access_token = login("/students/log-in", id, pw)
     return access_token
 
 
-def test_post_student2_login_handler(client):
-    id = get_init_config_data('test_account', 'STUDENT2_ID')
-    pw = get_init_config_data('test_account', 'STUDENT2_PW')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/students/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_student2_login_handler(student2_credentials, login):
+    id, pw = student2_credentials
+    access_token = login("/students/log-in", id, pw)
     return access_token
 
 
-def test_post_instructor_login_handler(client):
-    id = get_init_config_data('test_account', 'INSTRUCTOR_ID')
-    pw = get_init_config_data('test_account', 'INSTRUCTOR_PW')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/instructors/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_instructor_login_handler(instructor_credentials, login):
+    id, pw = instructor_credentials
+    access_token = login("/instructors/log-in", id, pw)
     return access_token
 
 
-def test_post_instructor_login_handler(client):
-    id = get_init_config_data('test_account', 'INSTRUCTOR2_ID')
-    pw = get_init_config_data('test_account', 'INSTRUCTOR2_PW')
-
-    login_data = {
-        "id": id,
-        "pw": pw
-    }
-
-    response = client.post("/instructors/log-in", json=login_data)
-    assert response.status_code == 200
-    assert "access_token" in response.json()
-    access_token = response.json()["access_token"]
+def test_post_instructor_login_handler(instructor2_credentials, login):
+    id, pw = instructor2_credentials
+    access_token = login("/instructors/log-in", id, pw)
     return access_token
