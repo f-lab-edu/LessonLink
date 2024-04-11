@@ -45,6 +45,16 @@ def instructor2_credentials():
 
 
 @pytest.fixture
+def instructor3_credentials():
+    return get_init_config_data('test_account', 'INSTRUCTOR3_ID'), get_init_config_data('test_account', 'INSTRUCTOR3_PW')
+
+
+@pytest.fixture
+def instructor3_patched_credentials():
+    return get_init_config_data('test_account', 'INSTRUCTOR3_ID'), get_init_config_data('test_account', 'INSTRUCTOR3_PW_PATCH')
+
+
+@pytest.fixture
 def login(client):
     def login_user(endpoint, id, pw):
         login_data = {

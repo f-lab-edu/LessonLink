@@ -22,7 +22,7 @@ def test_post_instructor_login_handler(instructor_credentials, login):
     return access_token
 
 
-def test_post_instructor_login_handler(instructor2_credentials, login):
+def test_post_instructor2_login_handler(instructor2_credentials, login):
     id, pw = instructor2_credentials
     access_token = login("/instructors/log-in", id, pw)
     return access_token

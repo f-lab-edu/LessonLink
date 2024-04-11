@@ -1,11 +1,8 @@
 from functions.init_file import get_init_config_data
-from tests.conftest import login
 from tests.test_login import test_post_student_login_handler, test_post_student_login_handler_admin
 
 
 def test_get_students_handler(client, admin_credentials, login):
-
-    id, pw = admin_credentials
 
     access_token = test_post_student_login_handler_admin(
         admin_credentials, login)
