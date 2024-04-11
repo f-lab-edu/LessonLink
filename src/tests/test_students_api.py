@@ -1,7 +1,10 @@
+import bcrypt
+from fastapi import Depends
 from fastapi.testclient import TestClient
 
 from main import app
 from functions.init_file import get_init_config_data
+from functions.student import StudentFunction
 from tests.test_login import test_post_student_login_handler, test_post_student_login_handler_admin
 
 client = TestClient(app=app)
@@ -36,12 +39,100 @@ def test_get_student_by_id_handler():
 
 
 def test_post_create_id_handler():
-    pass
+
+    request_body1 = {
+        "id": get_init_config_data('test_account', 'STUDENT3_ID'),
+        "pw": get_init_config_data('test_account', 'STUDENT3_PW'),
+        "name": "string",
+        "contact": "string",
+        "email": "string@string",
+        "birth_date": "2024-04-11",
+        "gender": "Male",
+        "join_date": "2024-04-11"
+    }
+
+    request_body2 = {
+        "id": get_init_config_data('test_account', 'STUDENT_ID'),
+        "pw": get_init_config_data('test_account', 'STUDENT_PW'),
+        "name": "string",
+        "contact": "string",
+        "email": "string@string",
+        "birth_date": "2024-04-11",
+        "gender": "Male",
+        "join_date": "2024-04-11"
+    }
+
+    response = client.post("/students/", json=request_body1)
+    assert response.status_code == 201
+
+    response = client.post("/students/", json=request_body2)
+    assert response.status_code == 409
+
+
+def test_post_student3_login_handler():
+    id = get_init_config_data('test_account', 'STUDENT3_ID')
+    pw = get_init_config_data('test_account', 'STUDENT3_PW')
+
+    login_data = {
+        "id": id,
+        "pw": pw
+    }
+
+    response = client.post("/students/log-in", json=login_data)
+    assert response.status_code == 200
+    assert "access_token" in response.json()
+    access_token = response.json()["access_token"]
+    return access_token
 
 
 def test_patch_update_student_pw_by_id_handler():
-    pass
+
+    access_token = test_post_student3_login_handler()
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    request_body = {
+        "pw": get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
+    }
+
+    response = client.patch("/students/testacct_student3", json=request_body)
+    assert response.status_code == 401
+
+    response = client.patch("/students/testacct_student3",
+                            json=request_body, headers=headers)
+
+    assert response.status_code == 200
+
+
+def test_post_student3_patched_login_handler():
+    id = get_init_config_data('test_account', 'STUDENT3_ID')
+    pw = get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
+
+    login_data = {
+        "id": id,
+        "pw": pw
+    }
+
+    response = client.post("/students/log-in", json=login_data)
+    assert response.status_code == 200
+    assert "access_token" in response.json()
+    access_token = response.json()["access_token"]
+    return access_token
 
 
 def test_delete_student_handler():
-    pass
+
+    access_token = test_post_student3_patched_login_handler()
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = client.delete(
+        "/students/testacct_student3", headers=headers)
+
+    assert response.status_code == 204
+
+    id = get_init_config_data('test_account', 'STUDENT3_ID')
+    response = client.get(f"/students/{id}", headers=headers)
+    assert response.status_code == 404
