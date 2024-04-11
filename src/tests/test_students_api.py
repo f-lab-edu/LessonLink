@@ -1,17 +1,9 @@
-import bcrypt
-from fastapi import Depends
-from fastapi.testclient import TestClient
-
-from main import app
 from functions.init_file import get_init_config_data
-from functions.student import StudentFunction
 from tests.test_login import test_post_student_login_handler, test_post_student_login_handler_admin
 
-client = TestClient(app=app)
 
-
-def test_get_students_handler():
-    access_token = test_post_student_login_handler_admin()
+def test_get_students_handler(client):
+    access_token = test_post_student_login_handler_admin(client)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -20,8 +12,8 @@ def test_get_students_handler():
     assert response.status_code == 200
 
 
-def test_get_student_by_id_handler():
-    access_token = test_post_student_login_handler()
+def test_get_student_by_id_handler(client):
+    access_token = test_post_student_login_handler(client)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -38,7 +30,7 @@ def test_get_student_by_id_handler():
     assert response.status_code == 401
 
 
-def test_post_create_id_handler():
+def test_post_create_id_handler(client):
 
     request_body1 = {
         "id": get_init_config_data('test_account', 'STUDENT3_ID'),
@@ -69,7 +61,7 @@ def test_post_create_id_handler():
     assert response.status_code == 409
 
 
-def test_post_student3_login_handler():
+def test_post_student3_login_handler(client):
     id = get_init_config_data('test_account', 'STUDENT3_ID')
     pw = get_init_config_data('test_account', 'STUDENT3_PW')
 
@@ -85,9 +77,9 @@ def test_post_student3_login_handler():
     return access_token
 
 
-def test_patch_update_student_pw_by_id_handler():
+def test_patch_update_student_pw_by_id_handler(client):
 
-    access_token = test_post_student3_login_handler()
+    access_token = test_post_student3_login_handler(client)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -105,7 +97,7 @@ def test_patch_update_student_pw_by_id_handler():
     assert response.status_code == 200
 
 
-def test_post_student3_patched_login_handler():
+def test_post_student3_patched_login_handler(client):
     id = get_init_config_data('test_account', 'STUDENT3_ID')
     pw = get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
 
@@ -121,9 +113,9 @@ def test_post_student3_patched_login_handler():
     return access_token
 
 
-def test_delete_student_handler():
+def test_delete_student_handler(client):
 
-    access_token = test_post_student3_patched_login_handler()
+    access_token = test_post_student3_patched_login_handler(client)
     headers = {
         "Authorization": f"Bearer {access_token}"
     }

@@ -1,12 +1,7 @@
-from fastapi.testclient import TestClient
-
-from main import app
 from functions.init_file import get_init_config_data
 
-client = TestClient(app=app)
 
-
-def test_post_student_login_handler_admin():
+def test_post_student_login_handler_admin(client):
     admin_id = get_init_config_data('admin_account', 'ID')
     admin_pw = get_init_config_data('admin_account', 'PW')
 
@@ -22,7 +17,7 @@ def test_post_student_login_handler_admin():
     return access_token
 
 
-def test_post_student_login_handler():
+def test_post_student_login_handler(client):
     id = get_init_config_data('test_account', 'STUDENT_ID')
     pw = get_init_config_data('test_account', 'STUDENT_PW')
 
@@ -38,7 +33,7 @@ def test_post_student_login_handler():
     return access_token
 
 
-def test_post_student2_login_handler():
+def test_post_student2_login_handler(client):
     id = get_init_config_data('test_account', 'STUDENT2_ID')
     pw = get_init_config_data('test_account', 'STUDENT2_PW')
 
@@ -54,7 +49,7 @@ def test_post_student2_login_handler():
     return access_token
 
 
-def test_post_instructor_login_handler():
+def test_post_instructor_login_handler(client):
     id = get_init_config_data('test_account', 'INSTRUCTOR_ID')
     pw = get_init_config_data('test_account', 'INSTRUCTOR_PW')
 
@@ -70,7 +65,7 @@ def test_post_instructor_login_handler():
     return access_token
 
 
-def test_post_instructor_login_handler():
+def test_post_instructor_login_handler(client):
     id = get_init_config_data('test_account', 'INSTRUCTOR2_ID')
     pw = get_init_config_data('test_account', 'INSTRUCTOR2_PW')
 
