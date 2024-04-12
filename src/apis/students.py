@@ -52,7 +52,7 @@ def get_student_by_id_handler(
 
 
 @router.post("/", status_code=201, tags=["Students"])
-def post_create_id_handler(
+def post_create_student_handler(
     request: CreateStudentRequest,
     repo: StudentRepository = Depends()
 ) -> StudentSchema:
