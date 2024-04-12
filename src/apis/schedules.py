@@ -13,7 +13,7 @@ router = APIRouter(prefix="/schedules")
 
 
 @router.get("/", status_code=200, tags=["Schedules"])
-def get_Schedules_handler(
+def get_schedules_handler(
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends(),
     repo: SchedulesRepository = Depends()
