@@ -38,7 +38,7 @@ def get_schedule_by_id_handler(
 
 
 @router.post("/", status_code=201, tags=["Schedules"])
-def post_create_id_handler(
+def post_create_schedule_handler(
     request: CreateScheduleRequest,
     access_token: str = Depends(get_access_token),
     instructor_func: InstructorFunction = Depends(),

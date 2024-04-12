@@ -37,7 +37,7 @@ def get_reservation_by_id_handler(
 
 
 @router.post("/", status_code=201, tags=["Reservations"])
-def post_create_id_handler(
+def post_create_reservation_handler(
     request: CreateReservationRequest,
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends(),
