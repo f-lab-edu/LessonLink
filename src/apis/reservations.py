@@ -12,7 +12,7 @@ router = APIRouter(prefix="/reservations")
 
 
 @router.get("/", status_code=200, tags=["Reservations"])
-def get_Reservations_handler(
+def get_reservations_handler(
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends(),
     repo: ReservationRepository = Depends()
