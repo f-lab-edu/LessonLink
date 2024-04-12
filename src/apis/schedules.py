@@ -58,7 +58,7 @@ def post_create_schedule_handler(
 
 
 @router.patch("/{id}", status_code=200, tags=["Schedules"])
-def patch_update_schedule_pw_by_id_handler(
+def patch_update_schedule_by_id_handler(
     id: int,
     request: UpdateScheduleRequest,
     access_token: str = Depends(get_access_token),
