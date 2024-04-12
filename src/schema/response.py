@@ -55,6 +55,7 @@ class CourseListSchema(BaseModel):
 
 
 class ClassroomSchema(BaseModel):
+    id: int
     name: str
     capacity: int = None
     location: str = None
@@ -69,6 +70,7 @@ class ClassroomListSchema(BaseModel):
 
 
 class ScheduleSchema(BaseModel):
+    id: int
     course_id: int = None
     classroom_id: int = None
     start_time: time = None
@@ -84,6 +86,7 @@ class ScheduleListSchema(BaseModel):
 
 
 class ReservationSchema(BaseModel):
+    id: int
     student_id: str
     course_id: int
     schedule_id: int
