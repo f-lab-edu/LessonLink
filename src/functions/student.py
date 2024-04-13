@@ -26,6 +26,7 @@ class StudentFunction(UserFunction):
             role = "admin"
         else:
             role = "student"
+
         return jwt.encode(
             {
                 "sub": id,
