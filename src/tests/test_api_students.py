@@ -1,5 +1,5 @@
 from functions.init_file import get_init_config_data
-from tests.test_login import test_post_student_login_handler, test_post_student_login_handler_admin
+from tests.test_login import test_post_student_login_handler_admin, test_post_student_login_handler
 
 
 def test_get_students_handler(client, admin_credentials, login):
