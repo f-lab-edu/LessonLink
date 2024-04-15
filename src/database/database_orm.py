@@ -104,7 +104,6 @@ class Courses(Base):
 
     instructors = relationship("Instructors", back_populates="courses")
     schedules = relationship("Schedules", back_populates="courses")
-    reservations = relationship("Reservations", back_populates="courses")
 
     @classmethod
     def create(cls, request: CreateCourseRequest) -> "Courses":
@@ -179,7 +178,6 @@ class Reservations(Base):
     notes = Column(String(255), nullable=True)
 
     students = relationship("Students", back_populates="reservations")
-    courses = relationship("Courses", back_populates="reservations")
     schedules = relationship("Schedules", back_populates="reservations")
 
     @classmethod
