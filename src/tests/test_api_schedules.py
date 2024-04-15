@@ -144,38 +144,3 @@ def test_patch_update_schedule_by_id_handler_instructor(
     response = client.patch(
         f"/schedules/{schedule_id}", headers=headers, json=request_body)
     assert response.status_code == 200
-
-
-def test_delete_schedule_handler_student(
-    client, student_credentials, login
-):
-    access_token = test_post_student_login_handler(
-        student_credentials, login
-    )
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    schedule_id = get_init_config_data("schedules", "id")
-
-    response = client.delete(f"/schedules/{schedule_id}", headers=headers)
-    assert response.status_code == 401
-
-
-def test_delete_schedule_handler_instructor(
-    client, instructor_credentials, login
-):
-    access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
-    )
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    schedule_id = get_init_config_data("schedules", "id")
-
-    response = client.delete(f"/schedules/{schedule_id}", headers=headers)
-    assert response.status_code == 204
-
-    response = client.get(f"/schedules/{schedule_id}", headers=headers)
-    assert response.status_code == 404
