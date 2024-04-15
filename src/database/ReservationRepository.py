@@ -29,7 +29,6 @@ class ReservationRepository(Repository):
             select(Reservations).filter_by(id=id)).scalar_one()
         if reservation:
             reservation.student_id = request.student_id
-            reservation.course_id = request.course_id
             reservation.schedule_id = request.schedule_id
             reservation.reservated_date = request.reservated_date
             reservation.reservated_time = request.reservated_time

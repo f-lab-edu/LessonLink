@@ -172,7 +172,6 @@ class Reservations(Base):
 
     id = Column(Integer, primary_key=True)
     student_id = Column(String(50), ForeignKey('students.id'), nullable=False)
-    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
     schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
     reservated_date = Column(Date, nullable=False)
     reservated_time = Column(Time, nullable=False)
@@ -188,7 +187,6 @@ class Reservations(Base):
 
         return cls(
             student_id=request.student_id,
-            course_id=request.course_id,
             schedule_id=request.schedule_id,
             reservated_date=request.reservated_date,
             reservated_time=request.reservated_time,

@@ -88,7 +88,6 @@ class ScheduleListSchema(BaseModel):
 class ReservationSchema(BaseModel):
     id: int
     student_id: str
-    course_id: int
     schedule_id: int
     reservated_date: date
     reservated_time: time
