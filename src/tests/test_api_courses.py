@@ -37,7 +37,8 @@ def test_post_create_course_handler(
         "description": "string",
         "start_date": "2024-04-11",
         "end_date": "2024-04-11",
-        "instructor_id": id
+        "instructor_id": id,
+        "cost": 500000
     }
 
     access_token = test_post_student_login_handler(
@@ -98,7 +99,8 @@ def test_patch_course_handler(
         "description": "string1",
         "start_date": "2024-04-10",
         "end_date": "2024-04-10",
-        "instructor_id": id
+        "instructor_id": id,
+        "cost": 200000
     }
     access_token = test_post_student_login_handler(
         student_credentials, login

@@ -38,7 +38,7 @@ def test_post_create_reservation_handler_student(
 
     request_body = {
         "student_id": get_init_config_data('test_account', 'STUDENT_ID'),
-        "schedule_id": 42,
+        "schedule_id": 50,
         "reservated_date": "2024-04-15",
         "reservated_time": "04:46:38.834Z",
         "status": "reservated",
@@ -63,7 +63,7 @@ def test_post_create_reservation_handler_instructor(
 
     request_body = {
         "student_id": get_init_config_data('test_account', 'STUDENT_ID'),
-        "schedule_id": 42,
+        "schedule_id": 50,
         "reservated_date": "2024-04-15",
         "reservated_time": "04:46:38.834Z",
         "status": "reservated",
@@ -115,7 +115,7 @@ def test_patch_update_reservation_by_id_handler_student(
     reservation_id = get_init_config_data("reservations", "id")
     request_body = {
         "student_id": get_init_config_data('test_account', 'STUDENT_ID'),
-        "schedule_id": 43,
+        "schedule_id": 51,
         "reservated_date": "2024-04-14",
         "reservated_time": "03:41:31.111Z",
         "status": "reservated",
@@ -140,7 +140,7 @@ def test_patch_update_reservation_by_id_handler_instructor(
     reservation_id = get_init_config_data("reservations", "id")
     request_body = {
         "student_id": get_init_config_data('test_account', 'INSTRUCTOR_ID'),
-        "schedule_id": 43,
+        "schedule_id": 51,
         "reservated_date": "2024-04-14",
         "reservated_time": "03:41:31.111Z",
         "status": "reservated",
