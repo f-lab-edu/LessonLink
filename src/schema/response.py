@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pydantic import BaseModel
 from datetime import date, time
 from typing import List
@@ -14,7 +15,6 @@ class StudentSchema(BaseModel):
     join_date: date = date.today()
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 
@@ -44,9 +44,9 @@ class CourseSchema(BaseModel):
     start_date: date = None
     end_date: date = None
     instructor_id: str = None
+    cost: int
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 

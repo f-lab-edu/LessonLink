@@ -32,6 +32,7 @@ class CreateCourseRequest(BaseModel):
     start_date: date = None
     end_date: date = None
     instructor_id: str = None
+    cost: int
 
 
 class UpdateCourseRequest(BaseModel):
@@ -40,6 +41,7 @@ class UpdateCourseRequest(BaseModel):
     start_date: date = None
     end_date: date = None
     instructor_id: str = None
+    cost: int
 
 
 class CreateClassroomRequest(BaseModel):

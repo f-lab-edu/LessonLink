@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Date, Integer, ForeignKey, Time
+from decimal import Decimal
+from sqlalchemy import Column, String, Date, Integer, ForeignKey, Time, Numeric
 from sqlalchemy.orm import declarative_base, relationship
 
 from schema.request import (
@@ -101,6 +102,7 @@ class Courses(Base):
     start_date = Column(Date)
     end_date = Column(Date)
     instructor_id = Column(String(50), ForeignKey('instructors.id'))
+    cost = Column(Integer)
 
     instructors = relationship("Instructors", back_populates="courses")
     schedules = relationship("Schedules", back_populates="courses")
@@ -114,7 +116,8 @@ class Courses(Base):
             description=request.description,
             start_date=request.start_date,
             end_date=request.end_date,
-            instructor_id=request.instructor_id
+            instructor_id=request.instructor_id,
+            cost=request.cost
         )
 
 
