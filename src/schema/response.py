@@ -104,3 +104,15 @@ class ReservationListSchema(BaseModel):
 
 class JWTResponse(BaseModel):
     access_token: str
+
+
+class PaymentsSchema(BaseModel):
+    uid: str
+    name: str
+    amount: int
+    status: str
+    is_paid_ok: bool
+    student_id: str
+
+    class Config:
+        from_attributes = True

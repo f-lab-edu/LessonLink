@@ -95,3 +95,12 @@ class UpdateReservationRequest(BaseModel):
 class LogInRequest(BaseModel):
     id: str
     pw: str = None
+
+
+class PaymentsRequest(BaseModel):
+    uid: str
+    name: str
+    amount: int
+    status: str
+    is_paid_ok: bool
+    student_id: str
