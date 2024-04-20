@@ -15,13 +15,13 @@ class InstructorFunction(UserFunction):
 
         return encrypted_pw.decode(self.encoding)
 
-    def verify_pw(self, plain_pw, hashed_pw):
+    def verify_pw(self, plain_pw, hashed_pw) -> bool:
         return bcrypt.checkpw(
             plain_pw.encode(self.encoding),
             hashed_pw.encode(self.encoding)
         )
 
-    def create_jwt(self, id: str):
+    def create_jwt(self, id: str) -> str:
         if id == 'admin':
             role = "admin"
         else:
@@ -37,7 +37,7 @@ class InstructorFunction(UserFunction):
             algorithm=self.jwt_algorithm
         )
 
-    def decode_jwt(self, access_token: str):
+    def decode_jwt(self, access_token: str) -> dict:
         payload: dict = jwt.decode(
             access_token, self.secret_key, algorithms=[self.jwt_algorithm]
         )
