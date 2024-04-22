@@ -2,7 +2,7 @@ import configparser
 import os
 
 
-def get_init_config_data(section, option):
+def get_init_config_data(section, option) -> str:
 
     config = configparser.ConfigParser()
 
@@ -14,7 +14,7 @@ def get_init_config_data(section, option):
     return config.get(section, option)
 
 
-def set_init_config_data(section, option, value):
+def set_init_config_data(section, option, value) -> None:
 
     config = configparser.ConfigParser()
 
