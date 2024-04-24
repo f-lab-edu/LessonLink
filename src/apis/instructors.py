@@ -22,7 +22,7 @@ def get_instructor_handler(
     role: str = payload['role']
     if not (role == 'admin'):
         raise HTTPException(
-            status_code=401, detail=f"Admin only allowed.")
+            status_code=401, detail=f"It can be used by only admin.")
 
     return repo.get_all_entities()
 
