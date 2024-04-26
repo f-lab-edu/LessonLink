@@ -110,22 +110,3 @@ def delete_student_handler(
         raise HTTPException(status_code=404, detail="Student Not Found")
 
 
-@router.post("/log-in", tags=["Students"])
-def post_student_login_handler(
-    request: LogInRequest,
-    repo: StudentRepository = Depends(),
-    student_func: StudentFunction = Depends()
-):
-
-    student: Students | None = repo.get_entity_by_id(id=request.id)
-
-    if not student:
-        raise HTTPException(status_code=404, detail="Student Not Found")
-
-    verified: bool = student_func.verify_pw(request.pw, student.pw)
-
-    if not verified:
-        raise HTTPException(status_code=401, detail="Password is incorrect.")
-
-    access_token: str = student_func.create_jwt(student.id)
-    return JWTResponse(access_token=access_token)
