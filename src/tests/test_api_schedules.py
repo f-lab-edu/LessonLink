@@ -2,11 +2,11 @@ from functions.init_file import get_init_config_data, set_init_config_data
 from tests.test_login import test_post_instructor_login_handler, test_post_student_login_handler
 
 
-def test_get_schedules_handler(
-    client, student_credentials, instructor_credentials, login
+def test_get_schedules_handler_student(
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_student_login_handler(
-        student_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -15,8 +15,12 @@ def test_get_schedules_handler(
     response = client.get("/schedules", headers=headers)
     assert response.status_code == 200
 
+
+def test_get_schedules_handler_instructor(
+    client, credentials, login_get_access_token
+):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -24,13 +28,12 @@ def test_get_schedules_handler(
 
     response = client.get("/schedules", headers=headers)
     assert response.status_code == 200
-
 
 def test_post_create_schedule_handler_student(
-    client, student_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_student_login_handler(
-        student_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -49,10 +52,10 @@ def test_post_create_schedule_handler_student(
 
 
 def test_post_create_schedule_handler_instructor(
-    client, instructor_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -72,11 +75,11 @@ def test_post_create_schedule_handler_instructor(
     assert response.status_code == 201
 
 
-def test_get_schedule_by_id_handler(
-    client, student_credentials, instructor_credentials, login
+def test_get_schedule_by_id_handler_student(
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_student_login_handler(
-        student_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -87,22 +90,29 @@ def test_get_schedule_by_id_handler(
     response = client.get(f"/schedules/{schedule_id}", headers=headers)
     assert response.status_code == 200
 
+    
+
+def test_get_schedule_by_id_handler_instructor(
+    client, credentials, login_get_access_token
+):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
+
+    schedule_id = get_init_config_data("schedules", "id")
 
     response = client.get(f"/schedules/{schedule_id}", headers=headers)
     assert response.status_code == 200
 
 
 def test_patch_update_schedule_by_id_handler_student(
-    client, student_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_student_login_handler(
-        student_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -123,10 +133,10 @@ def test_patch_update_schedule_by_id_handler_student(
 
 
 def test_patch_update_schedule_by_id_handler_instructor(
-    client, instructor_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -147,10 +157,10 @@ def test_patch_update_schedule_by_id_handler_instructor(
 
 
 def test_delete_schedule_handler_student(
-    client, student_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_student_login_handler(
-        student_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -163,10 +173,10 @@ def test_delete_schedule_handler_student(
 
 
 def test_delete_schedule_handler_instructor(
-    client, instructor_credentials, login
+    client, credentials, login_get_access_token
 ):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"

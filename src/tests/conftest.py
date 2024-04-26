@@ -10,57 +10,49 @@ def client():
 
 
 @pytest.fixture
-def admin_credentials():
-    return get_init_config_data('admin_account', 'ID'), get_init_config_data('admin_account', 'PW')
-
-
-@pytest.fixture
-def student_credentials():
-    return get_init_config_data('test_account', 'STUDENT_ID'), get_init_config_data('test_account', 'STUDENT_PW')
-
-
-@pytest.fixture
-def student2_credentials():
-    return get_init_config_data('test_account', 'STUDENT2_ID'), get_init_config_data('test_account', 'STUDENT2_PW')
-
-
-@pytest.fixture
-def student3_credentials():
-    return get_init_config_data('test_account', 'STUDENT3_ID'), get_init_config_data('test_account', 'STUDENT3_PW')
-
-
-@pytest.fixture
-def student3_patched_credentials():
-    return get_init_config_data('test_account', 'STUDENT3_ID'), get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
-
-
-@pytest.fixture
-def instructor_credentials():
-    return get_init_config_data('test_account', 'INSTRUCTOR_ID'), get_init_config_data('test_account', 'INSTRUCTOR_PW')
-
-
-@pytest.fixture
-def instructor2_credentials():
-    return get_init_config_data('test_account', 'INSTRUCTOR2_ID'), get_init_config_data('test_account', 'INSTRUCTOR2_PW')
-
-
-@pytest.fixture
-def instructor3_credentials():
-    return get_init_config_data('test_account', 'INSTRUCTOR3_ID'), get_init_config_data('test_account', 'INSTRUCTOR3_PW')
-
-
-@pytest.fixture
-def instructor3_patched_credentials():
-    return get_init_config_data('test_account', 'INSTRUCTOR3_ID'), get_init_config_data('test_account', 'INSTRUCTOR3_PW_PATCH')
-
-
-@pytest.fixture
-def login(client):
-    def login_user(endpoint, id, pw):
-        login_data = {
-            "id": id,
-            "pw": pw
+def credentials():
+    return {
+        'admin': {
+            'id': get_init_config_data('admin_account', 'ID'),
+            'pw': get_init_config_data('admin_account', 'PW')
+        },
+        'student': {
+            'id': get_init_config_data('test_account', 'STUDENT_ID'),
+            'pw': get_init_config_data('test_account', 'STUDENT_PW')
+        },
+        'student2': {
+            'id': get_init_config_data('test_account', 'STUDENT2_ID'),
+            'pw': get_init_config_data('test_account', 'STUDENT2_PW')
+        },
+        'student3': {
+            'id': get_init_config_data('test_account', 'STUDENT3_ID'),
+            'pw': get_init_config_data('test_account', 'STUDENT3_PW')
+        },
+        'student3_patched': {
+            'id': get_init_config_data('test_account', 'STUDENT3_ID'),
+            'pw': get_init_config_data('test_account', 'STUDENT3_PW_PATCH')
+        },
+        'instructor': {
+            'id': get_init_config_data('test_account', 'INSTRUCTOR_ID'),
+            'pw': get_init_config_data('test_account', 'INSTRUCTOR_PW')
+        },
+        'instructor2': {
+            'id': get_init_config_data('test_account', 'INSTRUCTOR2_ID'), 
+            'pw': get_init_config_data('test_account', 'INSTRUCTOR2_PW')
+        },
+        'instructor3': {
+            'id': get_init_config_data('test_account', 'INSTRUCTOR3_ID'),
+            'pw': get_init_config_data('test_account', 'INSTRUCTOR3_PW')
+        },
+        'instructor3_patched': {
+            'id': get_init_config_data('test_account', 'INSTRUCTOR3_ID'),
+            'pw':  get_init_config_data('test_account', 'INSTRUCTOR3_PW_PATCH')
         }
+    }
+
+@pytest.fixture
+def login_get_access_token(client):
+    def login_user(endpoint, login_data):
         response = client.post(endpoint, json=login_data)
         assert response.status_code == 200
         assert "access_token" in response.json()

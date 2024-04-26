@@ -1,11 +1,43 @@
 from functions.init_file import get_init_config_data
-from tests.test_login import test_post_instructor_login_handler, test_post_student_login_handler_admin
+from tests.test_login import test_post_admin_login_handler, test_post_instructor_login_handler, test_post_student_login_handler
 
 
-def test_get_instructor_handler(client, admin_credentials, login):
+def test_get_instructor_handler_student(
+    client, credentials, login_get_access_token
+):
+    # 학생 권한
+    access_token = test_post_student_login_handler(
+        credentials, login_get_access_token
+    )
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
 
-    access_token = test_post_student_login_handler_admin(
-        admin_credentials, login
+    response = client.get("/instructors", headers=headers)
+    assert response.status_code == 401
+
+
+def test_get_instructor_handler_instructor(
+    client, credentials, login_get_access_token
+):
+    # 강사 권한
+    access_token = test_post_instructor_login_handler(
+        credentials, login_get_access_token
+    )
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = client.get("/instructors", headers=headers)
+    assert response.status_code == 401
+
+
+def test_get_instructor_handler_admin(
+    client, credentials, login_get_access_token
+):
+    # 관리자 권한
+    access_token = test_post_admin_login_handler(
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -15,9 +47,11 @@ def test_get_instructor_handler(client, admin_credentials, login):
     assert response.status_code == 200
 
 
-def test_get_instructor_by_id_handler(client, instructor_credentials, login):
+def test_get_instructor_by_id_handler(
+    client, credentials, login_get_access_token
+):
     access_token = test_post_instructor_login_handler(
-        instructor_credentials, login
+        credentials, login_get_access_token
     )
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -60,18 +94,21 @@ def test_post_create_instructor_handler(client):
     assert response.status_code == 409
 
 
-def test_post_instructor3_login_handler(instructor3_credentials, login):
-    id, pw = instructor3_credentials
-    access_token = login("/log-in/instructors", id, pw)
-    return access_token
+def test_post_instructor3_login_handler(
+    credentials, login_get_access_token
+):
+    return login_get_access_token(
+        '/log-in/instructors', credentials['instructor3']
+    )
 
 
 def test_patch_update_instructor_pw_by_id_handler(
-    client, instructor3_credentials, login
+    client, credentials, login_get_access_token
 ):
 
     access_token = test_post_instructor3_login_handler(
-        instructor3_credentials, login)
+        credentials, login_get_access_token
+        )
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -85,25 +122,27 @@ def test_patch_update_instructor_pw_by_id_handler(
     assert response.status_code == 401
 
     response = client.patch("/instructors/testacct_instructor3",
-                            json=request_body, headers=headers)
+        json=request_body, headers=headers
+    )
 
     assert response.status_code == 200
 
 
 def test_post_instructor3_patched_login_handler(
-    instructor3_patched_credentials, login
+    credentials, login_get_access_token
 ):
-    id, pw = instructor3_patched_credentials
-    access_token = login("/log-in/instructors", id, pw)
-    return access_token
+    return login_get_access_token(
+        '/log-in/instructors', credentials['instructor3_patched']
+    )
 
 
 def test_delete_instructor_handler(
-    client, instructor3_patched_credentials, login
+    client, credentials, login_get_access_token
 ):
 
     access_token = test_post_instructor3_patched_login_handler(
-        instructor3_patched_credentials, login)
+        credentials, login_get_access_token
+    )
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
