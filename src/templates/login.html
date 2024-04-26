@@ -22,4 +22,46 @@
     <p class="mt-5 mb-3 text-muted">© 2024–</p>
   </form>
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.querySelector('form');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // 폼의 기본 제출 기능 방지
+
+    // ID와 비밀번호 입력값 가져오기
+    const studentId = document.getElementById('floatingInput').value;
+    const password = document.getElementById('floatingPassword').value;
+
+    // POST 요청 데이터 설정
+    const data = {
+      'id': studentId,
+      'pw': password
+    };
+
+    try {
+      // fetch API를 사용하여 서버에 POST 요청 보내기
+      const response = await fetch('/log-in/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' // 서버에 JSON 형식의 데이터를 보낸다고 알림
+        },
+        body: JSON.stringify(data) // JavaScript 객체를 JSON 문자열로 변환
+      });
+
+      // 서버 응답 처리
+      if (response.ok) {
+        const result = await response.json(); // 응답을 JSON으로 파싱
+        console.log('Login successful:', result);
+        alert('Login successful!');
+      } else {
+        throw new Error('Login failed!');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Login failed: ' + error.message);
+    }
+  });
+});
+</script>
 {% endblock %}
