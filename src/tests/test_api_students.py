@@ -66,7 +66,7 @@ def test_post_create_id_handler(client):
 
 def test_post_student3_login_handler(student3_credentials, login):
     id, pw = student3_credentials
-    access_token = login("/students/log-in", id, pw)
+    access_token = login("/log-in/students", id, pw)
     return access_token
 
 
@@ -93,7 +93,7 @@ def test_patch_update_student_pw_by_id_handler(client, student3_credentials, log
 
 def test_post_student3_patched_login_handler(student3_patched_credentials, login):
     id, pw = student3_patched_credentials
-    access_token = login("/students/log-in", id, pw)
+    access_token = login("/log-in/students", id, pw)
     return access_token
 
 
