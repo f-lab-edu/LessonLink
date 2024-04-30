@@ -17,7 +17,7 @@ app.include_router(reservations.router)
 app.include_router(payments.router)
 app.include_router(login.router)
 
-templates = Jinja2Templates(directory="templates")
+templates: Jinja2Templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/", response_class=HTMLResponse)
