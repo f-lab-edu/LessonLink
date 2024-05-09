@@ -29,6 +29,21 @@ def test_post_create_course_handler_large_data(
         response = client.post("/courses", headers=headers, json=request_body)
         assert response.status_code == 201
 
+def test_get_courses_handler_instructor_large_data(
+    client, credentials, login_get_access_token
+):
+    # 강사 권한
+    access_token = test_post_instructor_login_handler(
+        credentials, login_get_access_token
+    )
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = client.get("/courses", headers=headers)
+    assert response.status_code == 200
+
+
 def test_patch_course_handler_instructor_large_data(
     client, credentials, login_get_access_token
 ):
