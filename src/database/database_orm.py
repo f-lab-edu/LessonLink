@@ -109,7 +109,7 @@ class Courses(Base):
     schedules = relationship("Schedules", back_populates="courses")
 
     @classmethod
-    async def create(cls, request: CreateCourseRequest) -> "Courses":
+    def create(cls, request: CreateCourseRequest) -> "Courses":
 
         return cls(
             id=request.id,
