@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 
 from database.CoursesRepository import CoursesRepository
 from schema.request import CreateCourseRequest, UpdateCourseRequest
@@ -12,32 +12,30 @@ router = APIRouter(prefix="/courses")
 
 
 @router.get("/", status_code=200, tags=["Courses"])
-def get_courses_handler(
+async def get_courses_handler(
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
-    return repo.get_all_entities()
+    return await repo.get_all_entities()
 
 
 @router.get("/{id}", status_code=200, tags=["Courses"])
-def get_course_by_id_handler(
+async def get_course_by_id_handler(
     id: int,
     access_token: str = Depends(get_access_token),
     student_func: StudentFunction = Depends(),
     repo: CoursesRepository = Depends()
 ):
-    course: Courses | None = repo.get_entity_by_id(id=id)
+    course: Courses | None = await repo.get_entity_by_id(id=id)
 
-    if course:
-        return course
-    raise HTTPException(
-        status_code=404, detail=f"Not found course infomation of id = {id}")
+    return await repo.get_entity_by_id(id=id)
 
 
 @router.post("/", status_code=201, tags=["Courses"])
-def post_create_course_handler(
+async def post_create_course_handler(
     request: CreateCourseRequest,
+    background_tasks: BackgroundTasks,
     access_token: str = Depends(get_access_token),
     instructor_func: InstructorFunction = Depends(),
     repo: CoursesRepository = Depends()
@@ -50,13 +48,13 @@ def post_create_course_handler(
         raise HTTPException(
             status_code=401, detail=f"Student can't add course.")
 
-    course: Courses = Courses.create(request=request)
-    course: Courses = repo.create_entity(course=course)
+    course: Courses = await Courses.create(request=request)
+    course: Courses = await repo.create_entity(course=course)
     return CourseSchema.model_validate(course)
 
 
 @router.patch("/{id}", status_code=200, tags=["Courses"])
-def patch_course_handler(
+async def patch_course_handler(
     id: int,
     request: UpdateCourseRequest,
     access_token: str = Depends(get_access_token),
@@ -70,16 +68,16 @@ def patch_course_handler(
         raise HTTPException(
             status_code=401, detail=f"Student can't edit course.")
 
-    course: Courses | None = repo.get_entity_by_id(id=id)
+    course: Courses | None = await repo.get_entity_by_id(id=id)
 
     if course:
-        repo.update_entity_by_id(id=id, request=request)
+        await repo.update_entity_by_id(id=id, request=request)
     else:
         raise HTTPException(status_code=404, detail="Course Not Found")
 
 
 @router.delete("/{id}", status_code=204, tags=["Courses"])
-def delete_course_handler(
+async def delete_course_handler(
     id: int,
     access_token: str = Depends(get_access_token),
     instructor_func: InstructorFunction = Depends(),
@@ -92,9 +90,9 @@ def delete_course_handler(
         raise HTTPException(
             status_code=401, detail=f"Student can't delete course.")
 
-    course: Courses | None = repo.get_entity_by_id(id=id)
+    course: Courses | None = await repo.get_entity_by_id(id=id)
 
     if course:
-        repo.delete_entity_by_id(id=id)
+        await repo.delete_entity_by_id(id=id)
     else:
         raise HTTPException(status_code=404, detail="Course Not Found")
