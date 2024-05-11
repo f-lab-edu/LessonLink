@@ -1,5 +1,4 @@
-import anyio
-from abstract.repository import Repository, RepositoryAsync
+from abstract.repository import Repository
 from database.database_orm import Courses, Instructors
 from schema.request import UpdateCourseRequest
 
@@ -75,62 +74,3 @@ class CoursesRepository(Repository):
     def delete_entity_by_id(self, id: int) -> None:
         self.session.execute(delete(Courses).where(Courses.id == id))
         self.session.commit()
-
-
-class CoursesRepositoryAsync(RepositoryAsync):
-    async def get_all_entities(self):
-        results = await self.session.execute(
-            select(Courses, Instructors.name,
-                   Instructors.contact, Instructors.email)
-            .join(Instructors, Instructors.id == Courses.instructor_id)
-        )
-
-        result_scalars = results.scalars()
-
-        return result_scalars
-
-    async def get_entity_by_id(self, id: int) -> Courses | None:
-
-        result = await self.session.execute(
-            select(Courses, Instructors.name,
-                   Instructors.contact, Instructors.email)
-            .join(Instructors, Instructors.id == Courses.instructor_id)
-            .where(Courses.id == id)
-        )
-
-        course = result.scalar()
-
-        return course
-
-    async def create_entity(self, course: Courses) -> Courses:
-        try:
-            await anyio.to_thread.run_sync(self.session.add, instance=course)  # Run in threadpool if necessary
-            await self.session.commit()
-            await self.session.refresh(instance=course)
-            return course
-        except IntegrityError as e:
-            raise HTTPException(status_code=409, detail="ID already exist.")
-
-    async def update_entity_by_id(self, id: int, request: UpdateCourseRequest) -> None:
-
-        result = await self.session.execute(
-            select(Courses).filter_by(id=id))
-        
-        course = result.scalar_one()
-
-        if course:
-            course.name = request.name
-            course.description = request.description
-            course.start_date = request.start_date
-            course.end_date = request.end_date
-            course.instructor_id = request.instructor_id
-
-            await self.session.commit()
-            await self.session.refresh(instance=course)
-
-        else:
-            raise HTTPException(status_code=404, detail="Course Not Found")
-
-    async def delete_entity_by_id(self, id: int) -> None:
-        await self.session.execute(delete(Courses).where(Courses.id == id))
-        await self.session.commit()
