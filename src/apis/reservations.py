@@ -51,7 +51,7 @@ def post_create_reservation_handler(
 
     reservation: Reservations = Reservations.create(request=request)
     reservation: Reservations = repo.create_entity(reservation=reservation)
-    return ReservationSchema.from_orm(reservation)
+    return ReservationSchema.model_validate(reservation)
 
 
 @router.patch("/{id}", status_code=200, tags=["Reservations"])

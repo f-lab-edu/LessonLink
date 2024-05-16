@@ -50,7 +50,7 @@ def post_create_classroom_handler(
 
     classroom: Classrooms = Classrooms.create(request=request)
     classroom: Classrooms = repo.create_entity(classroom=classroom)
-    return ClassroomSchema.from_orm(classroom)
+    return ClassroomSchema.model_validate(classroom)
 
 
 @router.patch("/{id}", status_code=200, tags=["Classrooms"])
