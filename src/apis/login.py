@@ -11,6 +11,7 @@ from schema.request import LogInRequest
 from database.InstructorRepository import InstructorRepository
 from functions.instructor import InstructorFunction
 from schema.response import JWTResponse
+from cache.redis_init import redis_client
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 template_dir = os.path.join(base_dir, 'templates')
@@ -30,19 +31,32 @@ def post_student_login_handler(
     repo: StudentRepository = Depends(),
     student_func: StudentFunction = Depends()
 ):
+    
+    cached_access_token = redis_client.get(f'user:student:{request.id}:access_token')
 
-    student: Students | None = repo.get_entity_by_id(id=request.id)
+    if cached_access_token:
+        access_token = {
+            "access_token":cached_access_token
+        }
 
-    if not student:
-        raise HTTPException(status_code=404, detail="Student Not Found")
+        redis_client.expire(f'user:student:{request.id}:access_token', 60*60)
 
-    verified: bool = student_func.verify_pw(request.pw, student.pw)
+        return access_token
 
-    if not verified:
-        raise HTTPException(status_code=401, detail="Password is incorrect.")
+    else:
+        student: Students | None = repo.get_entity_by_id(id=request.id)
 
-    access_token: str = student_func.create_jwt(student.id)
-    return JWTResponse(access_token=access_token)
+        if not student:
+            raise HTTPException(status_code=404, detail="Student Not Found")
+
+        verified: bool = student_func.verify_pw(request.pw, student.pw)
+
+        if not verified:
+            raise HTTPException(status_code=401, detail="Password is incorrect.")
+
+        access_token: str = student_func.create_jwt(student.id)
+        redis_client.set(f'user:student:{request.id}:access_token', access_token, ex=60*60, nx=True)
+        return JWTResponse(access_token=access_token)
 
 
 @router.post("/instructors", tags=["Login"])
@@ -51,15 +65,29 @@ def post_instructor_login_handler(
     repo: InstructorRepository = Depends(),
     instructor_func: InstructorFunction = Depends()
 ):
-    instructor: Instructors | None = repo.get_entity_by_id(id=request.id)
+    
+    cached_access_token = redis_client.get(f'user:instructor:{request.id}:access_token')
 
-    if not instructor:
-        raise HTTPException(status_code=404, detail="Instructor Not Found")
+    if cached_access_token:
+        access_token = {
+            "access_token":cached_access_token
+        }
 
-    verified: bool = instructor_func.verify_pw(request.pw, instructor.pw)
+        redis_client.expire(f'user:instructor:{request.id}:access_token', 60*60)
 
-    if not verified:
-        raise HTTPException(status_code=401, detail="Password is incorrect.")
+        return access_token
+    
+    else:
+        instructor: Instructors | None = repo.get_entity_by_id(id=request.id)
 
-    access_token: str = instructor_func.create_jwt(instructor.id)
-    return JWTResponse(access_token=access_token)
+        if not instructor:
+            raise HTTPException(status_code=404, detail="Instructor Not Found")
+
+        verified: bool = instructor_func.verify_pw(request.pw, instructor.pw)
+
+        if not verified:
+            raise HTTPException(status_code=401, detail="Password is incorrect.")
+
+        access_token: str = instructor_func.create_jwt(instructor.id)
+        redis_client.set(f'user:instructor:{request.id}:access_token', access_token, ex=60*60, nx=True)
+        return JWTResponse(access_token=access_token)
