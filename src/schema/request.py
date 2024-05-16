@@ -104,3 +104,8 @@ class PaymentsRequest(BaseModel):
     status: str
     is_paid_ok: bool
     student_id: str
+
+
+class PutInBucketRequest(BaseModel):
+    id: str
+    course_id: int = None

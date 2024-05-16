@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from apis import (
     students, instructors, courses,
     classrooms, schedules, reservations,
-    payments, login
+    payments, login, bucket
 )
 
 app = FastAPI()
@@ -16,6 +16,7 @@ app.include_router(schedules.router)
 app.include_router(reservations.router)
 app.include_router(payments.router)
 app.include_router(login.router)
+app.include_router(bucket.router)
 
 templates = Jinja2Templates(directory="templates")
 

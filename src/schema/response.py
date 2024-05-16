@@ -116,3 +116,11 @@ class PaymentsSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class BucketSchema(BaseModel):
+    id: str
+    course_id: int = None
+
+    class Config:
+        from_attributes = True
