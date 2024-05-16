@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from database.database_orm import Students
 from database.StudentRepository import StudentRepository
 
-from schema.request import CreateStudentRequest, LogInRequest, UpdatePasswordRequest
-from schema.response import JWTResponse, StudentSchema
+from schema.request import CreateStudentRequest, UpdatePasswordRequest
+from schema.response import StudentSchema
 
 from functions.student import StudentFunction
 from functions.security import get_access_token

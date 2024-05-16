@@ -13,8 +13,7 @@ router = APIRouter(prefix="/classrooms")
 
 @router.get("/", status_code=200, tags=["Classrooms"])
 def get_classroom_handler(
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: ClassroomsRepository = Depends()
 ):
     return repo.get_all_entities()
@@ -23,8 +22,7 @@ def get_classroom_handler(
 @router.get("/{id}", status_code=200, tags=["Classrooms"])
 def get_classroom_by_id_handler(
     id: int,
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: ClassroomsRepository = Depends()
 ):
     classroom = repo.get_entity_by_id(id=id)

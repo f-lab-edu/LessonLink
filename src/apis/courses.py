@@ -5,7 +5,6 @@ from schema.request import CreateCourseRequest, UpdateCourseRequest
 from schema.response import CourseSchema
 from database.database_orm import Courses
 from functions.security import get_access_token
-from functions.student import StudentFunction
 from functions.instructor import InstructorFunction
 
 router = APIRouter(prefix="/courses")
@@ -13,8 +12,7 @@ router = APIRouter(prefix="/courses")
 
 @router.get("/", status_code=200, tags=["Courses"])
 def get_courses_handler(
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: CoursesRepository = Depends()
 ):
     return repo.get_all_entities()
@@ -23,8 +21,7 @@ def get_courses_handler(
 @router.get("/{id}", status_code=200, tags=["Courses"])
 def get_course_by_id_handler(
     id: int,
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: CoursesRepository = Depends()
 ):
     course: Courses | None = repo.get_entity_by_id(id=id)

@@ -5,7 +5,6 @@ from schema.request import CreateScheduleRequest, UpdateScheduleRequest
 from schema.response import ScheduleSchema
 from database.database_orm import Schedules
 from functions.security import get_access_token
-from functions.student import StudentFunction
 from functions.instructor import InstructorFunction
 
 
@@ -14,8 +13,7 @@ router = APIRouter(prefix="/schedules")
 
 @router.get("/", status_code=200, tags=["Schedules"])
 def get_schedules_handler(
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: SchedulesRepository = Depends()
 ):
     return repo.get_all_entities()
@@ -24,8 +22,7 @@ def get_schedules_handler(
 @router.get("/{id}", status_code=200, tags=["Schedules"])
 def get_schedule_by_id_handler(
     id: int,
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: SchedulesRepository = Depends()
 ):
     schedule = repo.get_entity_by_id(id=id)

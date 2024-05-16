@@ -13,8 +13,7 @@ router = APIRouter(prefix="/reservations")
 
 @router.get("/", status_code=200, tags=["Reservations"])
 def get_reservations_handler(
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: ReservationRepository = Depends()
 ):
     return repo.get_all_entities()
@@ -23,8 +22,7 @@ def get_reservations_handler(
 @router.get("/{id}", status_code=200, tags=["Reservations"])
 def get_reservation_by_id_handler(
     id: int,
-    access_token: str = Depends(get_access_token),
-    student_func: StudentFunction = Depends(),
+    _: str = Depends(get_access_token),
     repo: ReservationRepository = Depends()
 ):
     reservation = repo.get_entity_by_id(id=id)
