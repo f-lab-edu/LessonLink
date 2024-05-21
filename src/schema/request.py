@@ -109,3 +109,7 @@ class PaymentsRequest(BaseModel):
 class PutInBucketRequest(BaseModel):
     id: str
     course_id: int = None
+
+
+class PutOutBucketRequest(BaseModel):
+    course_id: int = None
