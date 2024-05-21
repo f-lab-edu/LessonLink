@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from database.database_orm import Instructors
 from schema.request import CreateInstructorRequest, UpdatePasswordRequest
-from database.InstructorRepository import InstructorRepository
+from database.database_repo import InstructorRepository
 from schema.response import InstructorSchema
 from functions.instructor import InstructorFunction
 from functions.security import get_access_token

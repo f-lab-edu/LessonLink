@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from database.database_orm import Students
-from database.StudentRepository import StudentRepository
+from database.database_repo import StudentRepository
 
 from schema.request import CreateStudentRequest, UpdatePasswordRequest
 from schema.response import StudentSchema

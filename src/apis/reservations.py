@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from database.ReservationRepository import ReservationRepository
+from database.database_repo import ReservationRepository
 from schema.request import CreateReservationRequest, UpdateReservationRequest
 from schema.response import ReservationSchema
 from database.database_orm import Reservations

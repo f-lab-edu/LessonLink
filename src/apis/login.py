@@ -5,11 +5,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from cache.redis_cache import RedisCacheLoginFunction
-from database.StudentRepository import StudentRepository
+from database.database_repo import StudentRepository
 from database.database_orm import Instructors, Students
 from functions.student import StudentFunction
 from schema.request import LogInRequest
-from database.InstructorRepository import InstructorRepository
+from database.database_repo import InstructorRepository
 from functions.instructor import InstructorFunction
 from schema.response import JWTResponse
 
