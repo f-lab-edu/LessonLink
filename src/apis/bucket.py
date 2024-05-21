@@ -4,7 +4,6 @@ from functions.security import get_access_token
 from cache.redis_init import redis_client
 from functions.student import StudentFunction
 from schema.request import PutInBucketRequest
-from schema.response import BucketSchema
 
 router = APIRouter(prefix="/bucket")
 
