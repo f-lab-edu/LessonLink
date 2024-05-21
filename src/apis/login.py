@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from cache.redis_cache import RedisCacheLoginFunction
 from database.StudentRepository import StudentRepository
 from database.database_orm import Instructors, Students
 from functions.student import StudentFunction
@@ -11,10 +12,9 @@ from schema.request import LogInRequest
 from database.InstructorRepository import InstructorRepository
 from functions.instructor import InstructorFunction
 from schema.response import JWTResponse
-from cache.redis_init import redis_client
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-template_dir = os.path.join(base_dir, 'templates')
+template_dir = os.path.join(base_dir, "templates")
 templates = Jinja2Templates(directory=template_dir)
 
 router = APIRouter(prefix="/log-in")
@@ -29,17 +29,18 @@ def get_student_login_handler(request: Request):
 def post_student_login_handler(
     request: LogInRequest,
     repo: StudentRepository = Depends(),
+    redis_func: RedisCacheLoginFunction = Depends(),
     student_func: StudentFunction = Depends()
 ):
     
-    cached_access_token = redis_client.get(f'user:student:{request.id}:access_token')
+    cached_access_token = redis_func.get_cached_access_token("student", request.id)
 
     if cached_access_token:
         access_token = {
             "access_token":cached_access_token
         }
 
-        redis_client.expire(f'user:student:{request.id}:access_token', 60*60)
+        redis_func.set_cached_expire_time("student", request.id, 60*60)
 
         return access_token
 
@@ -55,7 +56,7 @@ def post_student_login_handler(
             raise HTTPException(status_code=401, detail="Password is incorrect.")
 
         access_token: str = student_func.create_jwt(student.id)
-        redis_client.set(f'user:student:{request.id}:access_token', access_token, ex=60*60, nx=True)
+        redis_func.set_cached_access_token("student", request.id, access_token)
         return JWTResponse(access_token=access_token)
 
 
@@ -63,17 +64,18 @@ def post_student_login_handler(
 def post_instructor_login_handler(
     request: LogInRequest,
     repo: InstructorRepository = Depends(),
+    redis_func: RedisCacheLoginFunction = Depends(),
     instructor_func: InstructorFunction = Depends()
 ):
     
-    cached_access_token = redis_client.get(f'user:instructor:{request.id}:access_token')
+    cached_access_token = redis_func.get_cached_access_token("instructor", request.id)
 
     if cached_access_token:
         access_token = {
             "access_token":cached_access_token
         }
 
-        redis_client.expire(f'user:instructor:{request.id}:access_token', 60*60)
+        redis_func.set_cached_expire_time("instructor", request.id, 60*60)
 
         return access_token
     
@@ -89,5 +91,5 @@ def post_instructor_login_handler(
             raise HTTPException(status_code=401, detail="Password is incorrect.")
 
         access_token: str = instructor_func.create_jwt(instructor.id)
-        redis_client.set(f'user:instructor:{request.id}:access_token', access_token, ex=60*60, nx=True)
+        redis_func.set_cached_access_token("instructor", request.id, access_token)
         return JWTResponse(access_token=access_token)
