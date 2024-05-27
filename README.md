@@ -1,8 +1,14 @@
-# f-lab-python-backend-project-template
+# LessonLink: Link student and Academy
 
-F-lab에서 사용하는 Python backend project template 입니다.
 
-## How to install
+학습자와 교육자 간의 연결을 강화하고 다양한 강의와 학습 자료에 접근할 수 있게 하여 학습 경험을 혁신하는 교육 솔루션
+
+## :bulb:서비스 및 프로젝트 소개
+**`LessonLink`**는 학습자와 교육자 간의 연결을 강화하여 학습 경험을 혁신하는 교육 솔루션입니다. 학습자들에게 다양한 강의와 학습 자료를 제공하고, 교육자들은 자신의 강의를 등록하고 관리할 수 있습니다. 여러 학원이 참여하여 학습자들이 다양한 교육 기관의 강의를 선택할 수 있으며, 원활한 소통과 일정 관리 기능을 통해 효율적인 학습 환경을 제공합니다.
+
+## :mag: 서비스 기능
+
+## :rocket: 프로젝트 목표
 
 ### Pre-requisites
 
